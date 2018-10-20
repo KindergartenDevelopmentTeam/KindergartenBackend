@@ -1,14 +1,20 @@
 {
-  "name": "kindergarenbackend",
-  "version": "0.0.0",
-  "private": true,
+  "name": "kindergarten-api",
+  "version": "1.0.0",
+  "description": "This is the API for Kindergarten",
+  "main": "index.js",
   "scripts": {
-    "start": "node ./bin/www"
+	"prestart": "npm install",
+	"start": "node index.js"
   },
+  "keywords": [
+    "swagger"
+  ],
+  "license": "Unlicense",
+  "private": true,
   "dependencies": {
-    "cookie-parser": "~1.4.3",
-    "debug": "~2.6.9",
-    "express": "~4.16.0",
-    "morgan": "~1.9.0"
+    "connect": "^3.2.0",
+    "js-yaml": "^3.3.0",
+    "swagger-tools": "0.10.1"
   }
 }

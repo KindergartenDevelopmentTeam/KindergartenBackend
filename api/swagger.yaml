@@ -1,0 +1,1346 @@
+---
+swagger: "2.0"
+info:
+  description: "This is the API for Kindergarten"
+  version: "1.0.0"
+  title: "Kindergarten API"
+  contact:
+    email: "you@your-company.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "virtserver.swaggerhub.com"
+basePath: "/KDT5/KDTBackend/1.0.0"
+tags: []
+schemes:
+- "https"
+paths:
+  /user/{parentId}:
+    get:
+      summary: "Gets a parent"
+      description: "Gets a parent by id"
+      operationId: "getParent"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "parentId"
+        in: "path"
+        description: "The id of the parent"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "The parent with the given id"
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permission to view this user."
+        404:
+          description: "Parent not found"
+      x-swagger-router-controller: "Default"
+  /user/{parentId}/sendMessage:
+    post:
+      summary: "send a message"
+      description: "send a message"
+      operationId: "sendMessage"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "parentId"
+        in: "path"
+        description: "The id of the parent"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "message"
+        description: "The message to send"
+        required: true
+        schema:
+          $ref: "#/definitions/Message"
+      responses:
+        200:
+          description: "Message sent"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permission to send a message to this user."
+        404:
+          description: "Parent not found"
+      x-swagger-router-controller: "Default"
+  /user/{parentId}/getMessages:
+    get:
+      summary: "get messages"
+      description: "get messages from user"
+      operationId: "getMessage"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "parentId"
+        in: "path"
+        description: "The id of the parent"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "get the messages"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Message"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permisison to view this message"
+        404:
+          description: "Parent not found"
+      x-swagger-router-controller: "Default"
+  /child/{childId}:
+    get:
+      summary: "Gets a child"
+      description: "Gets a child"
+      operationId: "getChild"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "childId"
+        in: "path"
+        description: "The id of the child"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "The child with the id"
+          schema:
+            $ref: "#/definitions/Child"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permisison to view this child"
+        404:
+          description: "Child not found"
+      x-swagger-router-controller: "Default"
+  /child/{childId}/addNote:
+    post:
+      summary: "adds a note"
+      description: "adds a note to the child"
+      operationId: "addNote"
+      consumes:
+      - "application/json"
+      parameters:
+      - name: "childId"
+        in: "path"
+        description: "The id of the child"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "noteId"
+        description: "The Id of the note to add"
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        200:
+          description: "Adds the note to the child"
+        400:
+          description: "bad input parameter"
+        404:
+          description: "child not found"
+      x-swagger-router-controller: "Default"
+  /child/{childId}/getNotes:
+    get:
+      summary: "get all notes"
+      description: "get all notes from a child"
+      operationId: "getNotes"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "childId"
+        in: "path"
+        description: "The id of the child"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "The notes of the child"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Note"
+        400:
+          description: "bad input parameter"
+        404:
+          description: "child not found"
+      x-swagger-router-controller: "Default"
+  /child/{childId}/edit:
+    post:
+      summary: "edit a child"
+      description: "edit a child"
+      operationId: "editChild"
+      consumes:
+      - "application/json"
+      parameters:
+      - name: "childId"
+        in: "path"
+        description: "The id of the child"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "child"
+        description: "The modified Child object"
+        required: true
+        schema:
+          $ref: "#/definitions/Child"
+      responses:
+        200:
+          description: "The child was successfully edited"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permissions to edit this child."
+        404:
+          description: "Child not found"
+      x-swagger-router-controller: "Default"
+  /child/{childId}/editPresence:
+    post:
+      summary: "edit a child's presence"
+      description: "edit a child's presence"
+      operationId: "editPresence"
+      consumes:
+      - "application/json"
+      parameters:
+      - name: "childId"
+        in: "path"
+        description: "The id of the child"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "presence"
+        description: "The presence object."
+        required: true
+        schema:
+          $ref: "#/definitions/Presence"
+      responses:
+        200:
+          description: "The presence was successfully set"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permissions to edit this child's presence."
+        404:
+          description: "Child not found"
+      x-swagger-router-controller: "Default"
+  /child/{childId}/setParent:
+    post:
+      summary: "set a child's parent"
+      description: "set a child's parent"
+      operationId: "setParent"
+      consumes:
+      - "text/plain"
+      parameters:
+      - name: "childId"
+        in: "path"
+        description: "The id of the child"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "parentId"
+        description: "The id of the childs parent."
+        required: true
+        schema:
+          type: "integer"
+          example: 51
+      responses:
+        200:
+          description: "The parent was successfully set."
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permissions to set a child's parent."
+        404:
+          description: "Child or parent not found"
+      x-swagger-router-controller: "Default"
+  /createChild:
+    post:
+      summary: "create a child"
+      description: "crete a child"
+      operationId: "createChild"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "child"
+        description: "A child object to create"
+        required: false
+        schema:
+          $ref: "#/definitions/Child"
+      responses:
+        200:
+          description: "The child was successfully created."
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permissions to create a child."
+      x-swagger-router-controller: "Default"
+  /group/{groupId}:
+    get:
+      summary: "Gets a group"
+      description: "Gets a group"
+      operationId: "getGroup"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "groupId"
+        in: "path"
+        description: "The id of the group"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "The group with the id"
+          schema:
+            $ref: "#/definitions/Group"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permissions to view this group."
+        404:
+          description: "Group not found"
+      x-swagger-router-controller: "Default"
+  /group/{groupId}/addTeacher:
+    post:
+      summary: "adds a teacher"
+      description: "adds a teacher to the group"
+      operationId: "addTeacher"
+      consumes:
+      - "text/plain"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "groupId"
+        in: "path"
+        description: "The id of the group"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "teacherId"
+        description: "The Id of the teacher to add"
+        required: true
+        schema:
+          type: "integer"
+          example: 51
+      responses:
+        200:
+          description: "Teacher added to the group."
+        400:
+          description: "bad input parameter"
+        403:
+          description: "The user with the given id is not a teacher"
+        404:
+          description: "teacher not found"
+      x-swagger-router-controller: "Default"
+  /group/{groupId}/removeTeacher:
+    post:
+      summary: "removes a teacher"
+      description: "removes a teacher from the group"
+      operationId: "removeTeacher"
+      consumes:
+      - "text/plain"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "groupId"
+        in: "path"
+        description: "The id of the group"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "teacher"
+        description: "The id of the teacher to remove"
+        required: false
+        schema:
+          type: "integer"
+          example: 51
+      responses:
+        200:
+          description: "Teacher successfully removed from the gorup"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permissions to remove somebody from this group"
+        404:
+          description: "Group or Teacher not found"
+      x-swagger-router-controller: "Default"
+  /group/{groupId}/addChild:
+    post:
+      summary: "adds a child"
+      description: "adds a child to the group"
+      operationId: "addChild"
+      consumes:
+      - "text/plain"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "groupId"
+        in: "path"
+        description: "The id of the group"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "childId"
+        description: "The id of the child to add"
+        required: true
+        schema:
+          type: "integer"
+          example: 51
+      responses:
+        200:
+          description: "Child successfully added to the group"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permissions to add a child to this group"
+        404:
+          description: "Group or child not found"
+      x-swagger-router-controller: "Default"
+  /group/{groupId}/removeChild:
+    post:
+      summary: "removes a child"
+      description: "removes a child from the group"
+      operationId: "removeChild"
+      consumes:
+      - "text/plain"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "groupId"
+        in: "path"
+        description: "The id of the group"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "child"
+        description: "The id of the child to remove from the gorup"
+        required: false
+        schema:
+          type: "integer"
+          example: 51
+      responses:
+        200:
+          description: "Child successfully removed from the group"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permissions to remove a child from this group"
+        404:
+          description: "Group or Child not found"
+      x-swagger-router-controller: "Default"
+  /group/{groupId}/deleteGroup:
+    post:
+      summary: "deletes the group"
+      description: "deletes the group"
+      operationId: "deleteGroup"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "groupId"
+        in: "path"
+        description: "The id of the group"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "Group sucecssfully deleted"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "Only an admin can delete a gorup"
+        404:
+          description: "group can not be deleted"
+      x-swagger-router-controller: "Default"
+  /group/{groupId}/getParents:
+    get:
+      summary: "Gets parents"
+      description: "Gets a list of all the parents of children in the group"
+      operationId: "getParents"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "groupId"
+        in: "path"
+        description: "The id of the group"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "The parents of the group"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/User"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permissions to view this group"
+        404:
+          description: "Group not found"
+      x-swagger-router-controller: "Default"
+  /group/{groupId}/getTeachers:
+    get:
+      summary: "Gets teachers"
+      description: "Gets a list of all the teachers of the group"
+      operationId: "getTeachers"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "groupId"
+        in: "path"
+        description: "The id of the group"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "The teachers of the group"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/User"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permissions to view this group"
+        404:
+          description: "Group not found"
+      x-swagger-router-controller: "Default"
+  /group/{groupId}/getUsers:
+    get:
+      summary: "Gets users"
+      description: "Gets a list of all the teachers and parents of the group"
+      operationId: "getUsers"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "groupId"
+        in: "path"
+        description: "The id of the group"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "The users of the group"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/User"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permissions to view this group"
+        404:
+          description: "group not found"
+      x-swagger-router-controller: "Default"
+  /group/{groupId}/getChildren:
+    get:
+      summary: "Gets children"
+      description: "Gets a list of all the children of the group"
+      operationId: "getChildren"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "groupId"
+        in: "path"
+        description: "The id of the group"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "The children of the group"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Child"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permissions to view this group"
+        404:
+          description: "Group not found"
+      x-swagger-router-controller: "Default"
+  /group/{groupId}/getPosts:
+    get:
+      summary: "Gets posts"
+      description: "Gets a list of all the posts of the group"
+      operationId: "getPosts"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "groupId"
+        in: "path"
+        description: "The id of the group"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "The posts of the group"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Post"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permissions to view this group"
+        404:
+          description: "Group not found"
+      x-swagger-router-controller: "Default"
+  /group/{groupId}/post/{postId}:
+    get:
+      summary: "Gets a post"
+      description: "Gets a post of the group"
+      operationId: "getPost"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "groupId"
+        in: "path"
+        description: "The id of the group"
+        required: true
+        type: "integer"
+      - name: "postId"
+        in: "path"
+        description: "The id of the post"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "The post with the id"
+          schema:
+            $ref: "#/definitions/Post"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permissions to view this post"
+        404:
+          description: "Post not found"
+      x-swagger-router-controller: "Default"
+  /group/{groupId}/post/{postId}/like:
+    post:
+      summary: "makes a like"
+      description: "makes or removes a like on the post"
+      operationId: "like"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "groupId"
+        in: "path"
+        description: "The id of the group"
+        required: true
+        type: "integer"
+      - name: "postId"
+        in: "path"
+        description: "The id of the post"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "Successfully liked/unliked the post"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permissions to like this post"
+        404:
+          description: "Post not found"
+      x-swagger-router-controller: "Default"
+  /group/{groupId}/post/{postId}/vote:
+    post:
+      summary: "makes a vote"
+      description: "makes a vote on a poll inside a post"
+      operationId: "vote"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "groupId"
+        in: "path"
+        description: "The id of the group"
+        required: true
+        type: "integer"
+      - name: "postId"
+        in: "path"
+        description: "The id of the post"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "The vote to submit"
+        description: "The text of the comment"
+        required: true
+        schema:
+          $ref: "#/definitions/Vote"
+      responses:
+        200:
+          description: "Successfully voted on poll"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permission to vote"
+        404:
+          description: "Post not found"
+      x-swagger-router-controller: "Default"
+  /group/{groupId}/post/{postId}/edit:
+    post:
+      summary: "edits the post"
+      description: "edites the text of the post"
+      operationId: "edit"
+      consumes:
+      - "applicatoin/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "groupId"
+        in: "path"
+        description: "The id of the group"
+        required: true
+        type: "integer"
+      - name: "postId"
+        in: "path"
+        description: "The id of the post"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "content"
+        description: "The edited post"
+        required: true
+        schema:
+          $ref: "#/definitions/Post"
+      responses:
+        200:
+          description: "Post successfully edited"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permisison to edit this post"
+        404:
+          description: "Post not found"
+      x-swagger-router-controller: "Default"
+  /group/{groupId}/post/{postId}/comment:
+    post:
+      summary: "makes a comment"
+      description: "makes a comment on the post"
+      operationId: "comment"
+      consumes:
+      - "text/plain"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "groupId"
+        in: "path"
+        description: "The id of the group"
+        required: true
+        type: "integer"
+      - name: "postId"
+        in: "path"
+        description: "The id of the post"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "commentText"
+        description: "The text of the comment"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        200:
+          description: "Comment successfully added"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permission to comment in this group."
+        404:
+          description: "Post not found"
+      x-swagger-router-controller: "Default"
+definitions:
+  Group:
+    required:
+    - "id"
+    - "name"
+    properties:
+      id:
+        type: "integer"
+        example: 51
+      name:
+        type: "string"
+        example: "Kamilla Csoport"
+      posts:
+        type: "array"
+        items:
+          $ref: "#/definitions/Post"
+      teachers:
+        type: "array"
+        items:
+          $ref: "#/definitions/User"
+      children:
+        type: "array"
+        items:
+          $ref: "#/definitions/Child"
+      messages:
+        type: "array"
+        items:
+          $ref: "#/definitions/Message"
+      creationDate:
+        type: "string"
+        format: "int32"
+        example: ""
+    example:
+      children:
+      - parent:
+          role:
+            name: "Admin"
+            id: 51
+          name: "John Doe"
+          id: 51
+        notes:
+        - id: 51
+          content: "Your kid was good today"
+        - id: 51
+          content: "Your kid was good today"
+        name: "John Doe"
+        id: 51
+        presence:
+        - date: ""
+          id: 51
+          wasThere: true
+        - date: ""
+          id: 51
+          wasThere: true
+      - parent:
+          role:
+            name: "Admin"
+            id: 51
+          name: "John Doe"
+          id: 51
+        notes:
+        - id: 51
+          content: "Your kid was good today"
+        - id: 51
+          content: "Your kid was good today"
+        name: "John Doe"
+        id: 51
+        presence:
+        - date: ""
+          id: 51
+          wasThere: true
+        - date: ""
+          id: 51
+          wasThere: true
+      teachers:
+      - role:
+          name: "Admin"
+          id: 51
+        name: "John Doe"
+        id: 51
+      - role:
+          name: "Admin"
+          id: 51
+        name: "John Doe"
+        id: 51
+      name: "Kamilla Csoport"
+      messages:
+      - id: 51
+        creationDate: ""
+        content: "Hi, how are you?"
+      - id: 51
+        creationDate: ""
+        content: "Hi, how are you?"
+      id: 51
+      creationDate: ""
+      posts:
+      - image:
+          path: "grouppicture.jpg"
+          id: 51
+        creator:
+          role:
+            name: "Admin"
+            id: 51
+          name: "John Doe"
+          id: 51
+        comments:
+        - creator:
+            role:
+              name: "Admin"
+              id: 51
+            name: "John Doe"
+            id: 51
+          id: 51
+          creationDate: ""
+          content: "Ok, got it"
+        - creator:
+            role:
+              name: "Admin"
+              id: 51
+            name: "John Doe"
+            id: 51
+          id: 51
+          creationDate: ""
+          content: "Ok, got it"
+        id: 51
+        poll:
+          options:
+          - "Blue"
+          - "Blue"
+          votes:
+          - id: 51
+            user:
+              role:
+                name: "Admin"
+                id: 51
+              name: "John Doe"
+              id: 51
+            option: 1
+          - id: 51
+            user:
+              role:
+                name: "Admin"
+                id: 51
+              name: "John Doe"
+              id: 51
+            option: 1
+          id: 51
+        creationDate: ""
+        content: "Hey Everyone! Bring blue shoes tomorrow!"
+        likes:
+        - id: 51
+          user:
+            role:
+              name: "Admin"
+              id: 51
+            name: "John Doe"
+            id: 51
+        - id: 51
+          user:
+            role:
+              name: "Admin"
+              id: 51
+            name: "John Doe"
+            id: 51
+      - image:
+          path: "grouppicture.jpg"
+          id: 51
+        creator:
+          role:
+            name: "Admin"
+            id: 51
+          name: "John Doe"
+          id: 51
+        comments:
+        - creator:
+            role:
+              name: "Admin"
+              id: 51
+            name: "John Doe"
+            id: 51
+          id: 51
+          creationDate: ""
+          content: "Ok, got it"
+        - creator:
+            role:
+              name: "Admin"
+              id: 51
+            name: "John Doe"
+            id: 51
+          id: 51
+          creationDate: ""
+          content: "Ok, got it"
+        id: 51
+        poll:
+          options:
+          - "Blue"
+          - "Blue"
+          votes:
+          - id: 51
+            user:
+              role:
+                name: "Admin"
+                id: 51
+              name: "John Doe"
+              id: 51
+            option: 1
+          - id: 51
+            user:
+              role:
+                name: "Admin"
+                id: 51
+              name: "John Doe"
+              id: 51
+            option: 1
+          id: 51
+        creationDate: ""
+        content: "Hey Everyone! Bring blue shoes tomorrow!"
+        likes:
+        - id: 51
+          user:
+            role:
+              name: "Admin"
+              id: 51
+            name: "John Doe"
+            id: 51
+        - id: 51
+          user:
+            role:
+              name: "Admin"
+              id: 51
+            name: "John Doe"
+            id: 51
+  Post:
+    required:
+    - "comments"
+    - "creationDate"
+    - "creator"
+    - "id"
+    - "likes"
+    properties:
+      id:
+        type: "integer"
+        example: 51
+      creator:
+        $ref: "#/definitions/User"
+      content:
+        type: "string"
+        example: "Hey Everyone! Bring blue shoes tomorrow!"
+      image:
+        $ref: "#/definitions/Image"
+      poll:
+        $ref: "#/definitions/Poll"
+      likes:
+        type: "array"
+        items:
+          $ref: "#/definitions/Like"
+      comments:
+        type: "array"
+        items:
+          $ref: "#/definitions/Comment"
+      creationDate:
+        type: "string"
+        format: "int32"
+        example: ""
+    example:
+      image:
+        path: "grouppicture.jpg"
+        id: 51
+      creator:
+        role:
+          name: "Admin"
+          id: 51
+        name: "John Doe"
+        id: 51
+      comments:
+      - creator:
+          role:
+            name: "Admin"
+            id: 51
+          name: "John Doe"
+          id: 51
+        id: 51
+        creationDate: ""
+        content: "Ok, got it"
+      - creator:
+          role:
+            name: "Admin"
+            id: 51
+          name: "John Doe"
+          id: 51
+        id: 51
+        creationDate: ""
+        content: "Ok, got it"
+      id: 51
+      poll:
+        options:
+        - "Blue"
+        - "Blue"
+        votes:
+        - id: 51
+          user:
+            role:
+              name: "Admin"
+              id: 51
+            name: "John Doe"
+            id: 51
+          option: 1
+        - id: 51
+          user:
+            role:
+              name: "Admin"
+              id: 51
+            name: "John Doe"
+            id: 51
+          option: 1
+        id: 51
+      creationDate: ""
+      content: "Hey Everyone! Bring blue shoes tomorrow!"
+      likes:
+      - id: 51
+        user:
+          role:
+            name: "Admin"
+            id: 51
+          name: "John Doe"
+          id: 51
+      - id: 51
+        user:
+          role:
+            name: "Admin"
+            id: 51
+          name: "John Doe"
+          id: 51
+  Comment:
+    required:
+    - "content"
+    - "creationDate"
+    - "creator"
+    - "id"
+    properties:
+      id:
+        type: "integer"
+        example: 51
+      creator:
+        $ref: "#/definitions/User"
+      content:
+        type: "string"
+        example: "Ok, got it"
+      creationDate:
+        type: "string"
+        format: "int32"
+        example: ""
+    example:
+      creator:
+        role:
+          name: "Admin"
+          id: 51
+        name: "John Doe"
+        id: 51
+      id: 51
+      creationDate: ""
+      content: "Ok, got it"
+  Like:
+    required:
+    - "id"
+    - "user"
+    properties:
+      id:
+        type: "integer"
+        example: 51
+      user:
+        $ref: "#/definitions/User"
+    example:
+      id: 51
+      user:
+        role:
+          name: "Admin"
+          id: 51
+        name: "John Doe"
+        id: 51
+  Poll:
+    required:
+    - "id"
+    - "options"
+    - "votes"
+    properties:
+      id:
+        type: "integer"
+        example: 51
+      options:
+        type: "array"
+        items:
+          type: "string"
+          example: "Blue"
+      votes:
+        type: "array"
+        items:
+          $ref: "#/definitions/Vote"
+    example:
+      options:
+      - "Blue"
+      - "Blue"
+      votes:
+      - id: 51
+        user:
+          role:
+            name: "Admin"
+            id: 51
+          name: "John Doe"
+          id: 51
+        option: 1
+      - id: 51
+        user:
+          role:
+            name: "Admin"
+            id: 51
+          name: "John Doe"
+          id: 51
+        option: 1
+      id: 51
+  Vote:
+    required:
+    - "id"
+    - "option"
+    - "user"
+    properties:
+      id:
+        type: "integer"
+        example: 51
+      user:
+        $ref: "#/definitions/User"
+      option:
+        type: "integer"
+        example: 1
+    example:
+      id: 51
+      user:
+        role:
+          name: "Admin"
+          id: 51
+        name: "John Doe"
+        id: 51
+      option: 1
+  Image:
+    required:
+    - "id"
+    - "path"
+    properties:
+      id:
+        type: "integer"
+        example: 51
+      path:
+        type: "string"
+        example: "grouppicture.jpg"
+    example:
+      path: "grouppicture.jpg"
+      id: 51
+  Message:
+    required:
+    - "id"
+    properties:
+      id:
+        type: "integer"
+        example: 51
+      content:
+        type: "string"
+        example: "Hi, how are you?"
+      creationDate:
+        type: "string"
+        format: "int32"
+        example: ""
+    example:
+      id: 51
+      creationDate: ""
+      content: "Hi, how are you?"
+  Note:
+    required:
+    - "id"
+    properties:
+      id:
+        type: "integer"
+        example: 51
+      content:
+        type: "string"
+        example: "Your kid was good today"
+    example:
+      id: 51
+      content: "Your kid was good today"
+  Presence:
+    required:
+    - "id"
+    properties:
+      id:
+        type: "integer"
+        example: 51
+      wasThere:
+        type: "boolean"
+        example: true
+      date:
+        type: "string"
+        format: "int32"
+        example: ""
+    example:
+      date: ""
+      id: 51
+      wasThere: true
+  User:
+    required:
+    - "id"
+    properties:
+      id:
+        type: "integer"
+        example: 51
+      name:
+        type: "string"
+        example: "John Doe"
+      role:
+        $ref: "#/definitions/Role"
+    example:
+      role:
+        name: "Admin"
+        id: 51
+      name: "John Doe"
+      id: 51
+  Role:
+    required:
+    - "id"
+    properties:
+      id:
+        type: "integer"
+        example: 51
+      name:
+        type: "string"
+        example: "Admin"
+    example:
+      name: "Admin"
+      id: 51
+  Child:
+    required:
+    - "id"
+    - "name"
+    - "notes"
+    - "parent"
+    - "presence"
+    properties:
+      id:
+        type: "integer"
+        example: 51
+      name:
+        type: "string"
+        example: "John Doe"
+      parent:
+        $ref: "#/definitions/User"
+      presence:
+        type: "array"
+        items:
+          $ref: "#/definitions/Presence"
+      notes:
+        type: "array"
+        items:
+          $ref: "#/definitions/Note"
+    example:
+      parent:
+        role:
+          name: "Admin"
+          id: 51
+        name: "John Doe"
+        id: 51
+      notes:
+      - id: 51
+        content: "Your kid was good today"
+      - id: 51
+        content: "Your kid was good today"
+      name: "John Doe"
+      id: 51
+      presence:
+      - date: ""
+        id: 51
+        wasThere: true
+      - date: ""
+        id: 51
+        wasThere: true
