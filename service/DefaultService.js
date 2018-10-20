@@ -1111,10 +1111,10 @@ exports.setParent = function(childId,parentId) {
  *
  * groupId Integer The id of the group
  * postId Integer The id of the post
- * the vote to submit Vote The text of the comment
+ * vote Vote The vote to submit
  * no response value expected for this operation
  **/
-exports.vote = function(groupId,postId,the vote to submit) {
+exports.vote = function(groupId,postId,vote) {
   return new Promise(function(resolve, reject) {
     resolve();
   });

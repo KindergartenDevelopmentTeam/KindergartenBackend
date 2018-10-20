@@ -296,8 +296,8 @@ module.exports.setParent = function setParent (req, res, next) {
 module.exports.vote = function vote (req, res, next) {
   var groupId = req.swagger.params['groupId'].value;
   var postId = req.swagger.params['postId'].value;
-  var the vote to submit = req.swagger.params['The vote to submit'].value;
-  Default.vote(groupId,postId,the vote to submit)
+  var vote = req.swagger.params['vote'].value;
+  Default.vote(groupId,postId,vote)
     .then(function (response) {
       utils.writeJson(res, response);
     })

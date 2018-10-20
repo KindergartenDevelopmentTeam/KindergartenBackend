@@ -10,7 +10,7 @@ info:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 host: "virtserver.swaggerhub.com"
-basePath: "/KDT5/KDTBackend/1.0.0"
+basePath: "/"
 tags: []
 schemes:
 - "https"
@@ -675,8 +675,8 @@ paths:
         required: true
         type: "integer"
       - in: "body"
-        name: "The vote to submit"
-        description: "The text of the comment"
+        name: "vote"
+        description: "The vote to submit"
         required: true
         schema:
           $ref: "#/definitions/Vote"
