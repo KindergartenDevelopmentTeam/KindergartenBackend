@@ -7,12 +7,12 @@ exports.respondWithCode = function(code, payload) {
   return new ResponsePayload(code, payload);
 }
 
-var writeJson = exports.writeJson = function(response, arg1, arg2) {
-  var code;
-  var payload;
+const writeJson = exports.writeJson = response => (arg1, arg2) => {
+  let code;
+  let payload;
 
   if(arg1 && arg1 instanceof ResponsePayload) {
-    writeJson(response, arg1.payload, arg1.code);
+    writeJson(response)(arg1.payload, arg1.code);
     return;
   }
 

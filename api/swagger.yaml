@@ -5,12 +5,12 @@ info:
   version: "1.0.0"
   title: "Kindergarten API"
   contact:
-    email: "you@your-company.com"
+    email: "dev@kindergarten.com"
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "virtserver.swaggerhub.com"
-basePath: "/"
+host: "localhost"
+basePath: "/api/"
 tags: []
 schemes:
 - "https"
@@ -307,7 +307,7 @@ paths:
           description: "You have no permissions to view this group."
         404:
           description: "Group not found"
-      x-swagger-router-controller: "Default"
+      x-swagger-router-controller: "group"
   /group/{groupId}/addTeacher:
     post:
       summary: "adds a teacher"
@@ -771,8 +771,11 @@ definitions:
       id:
         type: "integer"
         example: 51
+        minimum: 1
       name:
         type: "string"
+        maxLength: 50
+        minLength: 5
         example: "Kamilla Csoport"
       posts:
         type: "array"
@@ -1009,6 +1012,7 @@ definitions:
         $ref: "#/definitions/User"
       content:
         type: "string"
+        maxLength: 512
         example: "Hey Everyone! Bring blue shoes tomorrow!"
       image:
         $ref: "#/definitions/Image"
@@ -1151,10 +1155,15 @@ definitions:
       id:
         type: "integer"
         example: 51
+      question:
+        type: "string"
+        maxLength: 255
+        example: "What shell be the dinner tomorrow?"
       options:
         type: "array"
         items:
           type: "string"
+          maxLength: 255
           example: "Blue"
       votes:
         type: "array"
@@ -1215,6 +1224,7 @@ definitions:
         example: 51
       path:
         type: "string"
+        maxLength: 128
         example: "grouppicture.jpg"
     example:
       path: "grouppicture.jpg"
@@ -1228,6 +1238,7 @@ definitions:
         example: 51
       content:
         type: "string"
+        maxLength: 512
         example: "Hi, how are you?"
       creationDate:
         type: "string"

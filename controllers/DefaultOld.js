@@ -1,3 +1,4 @@
+
 'use strict';
 
 var utils = require('../utils/writer.js');
@@ -133,6 +134,7 @@ module.exports.getChildren = function getChildren (req, res, next) {
     });
 };
 
+
 module.exports.getGroup = function getGroup (req, res, next) {
   var groupId = req.swagger.params['groupId'].value;
   Default.getGroup(groupId)
@@ -143,6 +145,7 @@ module.exports.getGroup = function getGroup (req, res, next) {
       utils.writeJson(res, response);
     });
 };
+
 
 module.exports.getMessage = function getMessage (req, res, next) {
   var parentId = req.swagger.params['parentId'].value;
