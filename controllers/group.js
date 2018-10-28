@@ -7,4 +7,5 @@ module.exports.getGroup = (req, res, next) => {
     group
         .getGroupById(groupId)
         .then(writer.writeJson(res))
+        .catch(next)
 };
