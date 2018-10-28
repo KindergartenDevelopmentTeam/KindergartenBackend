@@ -17,6 +17,6 @@
     "dotenv": "^6.1.0",
     "js-yaml": "^3.3.0",
     "mysql": "^2.16.0",
-    "swagger-tools": "0.10.1"
+    "swagger-tools": "^0.10.4"
   }
 }
