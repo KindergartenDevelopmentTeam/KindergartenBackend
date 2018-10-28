@@ -1,5 +1,5 @@
 module.exports = () => {
-    let error = new Error('Content not found')
+    let error = new Error('Not found')
     error.status = 404;
     return error;
 }

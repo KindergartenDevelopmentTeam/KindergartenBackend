@@ -15,31 +15,32 @@ tags: []
 schemes:
 - "https"
 paths:
-  /user/{parentId}:
+  /user/{userId}:
     get:
-      summary: "Gets a parent"
-      description: "Gets a parent by id"
-      operationId: "getParent"
+      summary: "Gets a user"
+      description: "Gets a user by their id"
+      operationId: "getUser"
       produces:
       - "application/json"
       parameters:
-      - name: "parentId"
+      - name: "userId"
         in: "path"
         description: "The id of the parent"
         required: true
         type: "integer"
+        minimum: 1
       responses:
         200:
-          description: "The parent with the given id"
+          description: "The user with the given id"
           schema:
             $ref: "#/definitions/User"
         400:
-          description: "bad input parameter"
+          description: "Bad input parameter"
         403:
-          description: "You have no permission to view this user."
+          description: "You have no permissions to view this user."
         404:
-          description: "Parent not found"
-      x-swagger-router-controller: "Default"
+          description: "User not found"
+      x-swagger-router-controller: "user"
   /user/{parentId}/sendMessage:
     post:
       summary: "send a message"
