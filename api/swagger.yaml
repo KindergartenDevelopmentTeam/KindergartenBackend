@@ -41,25 +41,28 @@ paths:
         404:
           description: "User not found"
       x-swagger-router-controller: "user"
-  /user/{parentId}/sendMessage:
+  /user/{userId}/sendMessage:
     post:
       summary: "send a message"
-      description: "send a message"
-      operationId: "sendMessage"
+      description: "Send a message to a user"
+      operationId: "sendMessageToUser"
       produces:
       - "application/json"
       parameters:
-      - name: "parentId"
+      - name: "userId"
         in: "path"
-        description: "The id of the parent"
+        description: "The id of the user"
         required: true
         type: "integer"
+        minimum: 1
       - in: "body"
         name: "message"
         description: "The message to send"
         required: true
         schema:
-          $ref: "#/definitions/Message"
+          type: "string"
+          minLength: 1
+          maxLength: 512
       responses:
         200:
           description: "Message sent"
@@ -68,19 +71,19 @@ paths:
         403:
           description: "You have no permission to send a message to this user."
         404:
-          description: "Parent not found"
-      x-swagger-router-controller: "Default"
-  /user/{parentId}/getMessages:
+          description: "User not found"
+      x-swagger-router-controller: "user"
+  /user/{userId}/getMessages:
     get:
       summary: "get messages"
       description: "get messages from user"
-      operationId: "getMessage"
+      operationId: "getMessagesFromUser"
       produces:
       - "application/json"
       parameters:
-      - name: "parentId"
+      - name: "userId"
         in: "path"
-        description: "The id of the parent"
+        description: "The id of the user"
         required: true
         type: "integer"
       responses:
@@ -96,7 +99,7 @@ paths:
           description: "You have no permisison to view this message"
         404:
           description: "Parent not found"
-      x-swagger-router-controller: "Default"
+      x-swagger-router-controller: "user"
   /child/{childId}:
     get:
       summary: "Gets a child"

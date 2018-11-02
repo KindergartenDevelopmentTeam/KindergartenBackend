@@ -1,10 +1,11 @@
-var mysql = require('mysql')
+const mysql = require('mysql')
 
-var pool  = mysql.createPool({
+const pool  = mysql.createPool({
     host     : process.env.DATABASE_HOST,
     user     : process.env.DATABASE_USER,
     password : process.env.DATABASE_PASSWORD,
-    database : 'kindergarten'
+    database : 'kindergarten',
+    multipleStatements: true
 })
 
 
@@ -15,27 +16,48 @@ const getConnection = new Promise((resolve, reject) => {
     })
 })
 
+module.exports.escape = (dataToEscape) => getConnection.escape(dataToEscape)
+
+module.exports.transaction = (callback) => new Promise(async (resolve, reject) => {
+    const connection = await getConnection;
+
+    connection.beginTransaction(async error => {
+        if (error) return reject(error)
+
+        try {
+            const data = await callback(connection)
+
+            connection.commit(error => {
+                if (error) {
+                    return connection.rollback(() => reject(error))
+                }
+
+                resolve(data)
+
+            })
+        } catch (error) {
+            return connection.rollback(() => reject(error))
+        }
+    })
+})
 
 module.exports.query = (query, data = []) => new Promise((resolve, reject) => {
     getConnection.then(connection => {
         connection.query(query, data, (error, data) => {
             if (error) return reject(error)
-            //connection.release() // TODO ?
             return resolve(data)
         })
     })
 })
 
-module.exports.createDb = () => {
-    this.query(`
-        CREATE TABLE IF NOT EXISTS \`groups\` (
-            \`id\` int(11) unsigned NOT NULL AUTO_INCREMENT,
-            \`name\` varchar(50) NOT NULL DEFAULT '',
-            \`creationDate\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (\`id\`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-    `)
+module.exports.queryWithConnection = (connection, query, data = []) => new Promise((resolve, reject) => {
+    connection.query(query, data, (error, data) => {
+        if (error) return reject(error)
+        return resolve(data)
+    })
+})
 
-    this.query(``)
+module.exports.createDb = () => {
+    // TODO
 }
 

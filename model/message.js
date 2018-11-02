@@ -1,5 +1,85 @@
-const { query } = require('../db')
+const { query, transaction, queryWithConnection } = require('../db')
 
-module.exports = {
-    getMessages: (threadId) => query('SELECT * FROM `message` WHERE threadId = ?', [threadId])
+const flatMap = require('flatmap')
+
+const messageModel = module.exports = {
+    getMessages: (threadId) => query('SELECT * FROM `message` WHERE threadId = ?', [threadId]),
+
+    sendMessage: (threadId, content) => query(`
+        INSERT INTO message (threadId, content)
+        VALUES (?, ?)
+    `, [threadId, content]),
+
+    getThread: (userIds) => new Promise(async (resolve, reject) => {
+        try {
+            const joins = userIds.map((userId, index) =>
+                `JOIN userInThread AS \`uit${index}\` ON \`uit${index}\`.threadId = thread.id`)
+            const wheres = userIds.map((userId, index) => `\`uit${index}\`.userId = ?`)
+
+            const joinStr = joins.join(' ')
+            const whereStr = wheres.join(' AND ')
+
+            const threads = await query(`
+                SELECT thread.* FROM thread
+                JOIN userInThread AS uitMain ON uitMain.threadId = thread.id
+                ${joinStr}
+                WHERE ${whereStr};
+            `, userIds)
+
+            console.log(`
+                SELECT thread.* FROM thread
+                JOIN userInThread AS uitMain ON uitMain.threadId = thread.id
+                ${joinStr}
+                WHERE ${whereStr};
+            `)
+
+            if (threads.length === 0) { // create
+                const threads = await messageModel.createThread(userIds, null)
+                return resolve(threads[0])
+            }
+
+            return resolve(threads[0])
+
+        } catch (error) {
+            return reject(error)
+        }
+    }),
+
+    createThread: (userIds, name) => new Promise((resolve, reject) => {
+
+        const inserts = userIds.map(userId => `(?, ?)`)
+        const insertStr = inserts.join(',')
+
+
+        transaction(async connection => {
+            try {
+                await queryWithConnection(connection, `INSERT INTO thread (\`name\`) VALUES (?)`, [name])
+                const id = (await queryWithConnection(connection, `SELECT LAST_INSERT_ID() as id;`))[0]['id']
+
+                const ids = flatMap(userIds, userId => [id, userId])
+
+                await queryWithConnection(
+                    connection,
+                    `INSERT INTO userInThread (\`threadId\`, \`userId\`) VALUES ${insertStr};`,
+                    ids
+                )
+
+                const thread = await queryWithConnection(connection, `SELECT * FROM thread WHERE id = ?`, [id])
+
+                resolve(thread)
+
+            } catch (error) {
+                connection.rollback()
+                reject(error)
+            }
+        })
+    }),
+
+    getThreadForGroup: groupId => {
+
+    }
+
+
+
+
 }

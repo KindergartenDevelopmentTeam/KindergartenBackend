@@ -40,6 +40,10 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
     app.use(middleware.swaggerUi())
 
     app.use((error, req, res, next) => {
+        if (isNaN(error.code)) {
+            error.code = 500
+        }
+
         if (error.code === 500)
             console.error(error)
 
