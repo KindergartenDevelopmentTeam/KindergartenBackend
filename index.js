@@ -27,11 +27,27 @@ const swaggerDoc = jsyaml.safeLoad(spec)
 // Initialize the Swagger middleware
 swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
 
+    app.use((req, res, next) => {
+        console.log(`query is: ${JSON.stringify(req.query, null, 2)}`)
+        next()
+    })
+
     // Interpret Swagger resources and attach metadata to request - must be first in swagger-tools middleware chain
     app.use(middleware.swaggerMetadata())
 
     // Validate Swagger requests
     app.use(middleware.swaggerValidator())
+
+    app.use('/generatePassword', (req, res, next) => {
+        const bcrypt = require('bcrypt')
+        bcrypt.hash('parent', 10, function(err, hash) {
+            if (err) return next(err)
+            res.end(hash)
+        });
+    })
+
+    // authentication
+    app.use(require('./auth'))
 
     // Route validated requests to appropriate controller
     app.use(middleware.swaggerRouter(options))

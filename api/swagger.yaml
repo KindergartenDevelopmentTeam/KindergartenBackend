@@ -13,7 +13,18 @@ host: "localhost"
 basePath: "/api/"
 tags: []
 schemes:
+- "http"
 - "https"
+securityDefinitions:
+  OauthSecurity:
+    type: oauth2
+    flow: accessCode
+    authorizationUrl: '/oauth/authorise'
+    tokenUrl: '/oauth/token'
+    scopes:
+      admin: Admin scope
+      teacher: Teacher scope
+      parent: Parent scope
 paths:
   /user/{userId}:
     get:
@@ -41,6 +52,11 @@ paths:
         404:
           description: "User not found"
       x-swagger-router-controller: "user"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
+        - "parent"
   /user/{userId}/sendMessage:
     post:
       summary: "send a message"
@@ -73,6 +89,11 @@ paths:
         404:
           description: "User not found"
       x-swagger-router-controller: "user"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
+        - "parent"
   /user/{userId}/getMessages:
     get:
       summary: "get messages"
@@ -100,6 +121,11 @@ paths:
         404:
           description: "Parent not found"
       x-swagger-router-controller: "user"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
+        - "parent"
   /child/{childId}:
     get:
       summary: "Gets a child"
@@ -124,14 +150,19 @@ paths:
           description: "You have no permisison to view this child"
         404:
           description: "Child not found"
-      x-swagger-router-controller: "Default"
+      x-swagger-router-controller: "child"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
+        - "parent"
   /child/{childId}/addNote:
     post:
       summary: "adds a note"
       description: "adds a note to the child"
-      operationId: "addNote"
+      operationId: "addNoteToChild"
       consumes:
-      - "application/json"
+      - "text/plain"
       parameters:
       - name: "childId"
         in: "path"
@@ -139,24 +170,29 @@ paths:
         required: true
         type: "integer"
       - in: "body"
-        name: "noteId"
-        description: "The Id of the note to add"
+        name: "note"
+        description: "The text of the note to add"
         required: true
         schema:
-          type: "integer"
+          type: "string"
+          maxLength: 512
       responses:
         200:
-          description: "Adds the note to the child"
+          description: "Note added to the child"
         400:
           description: "bad input parameter"
         404:
           description: "child not found"
-      x-swagger-router-controller: "Default"
+      x-swagger-router-controller: "child"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
   /child/{childId}/getNotes:
     get:
       summary: "get all notes"
       description: "get all notes from a child"
-      operationId: "getNotes"
+      operationId: "getNotesOfChild"
       produces:
       - "application/json"
       parameters:
@@ -176,7 +212,12 @@ paths:
           description: "bad input parameter"
         404:
           description: "child not found"
-      x-swagger-router-controller: "Default"
+      x-swagger-router-controller: "child"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
+        - "parent"
   /child/{childId}/edit:
     post:
       summary: "edit a child"
@@ -198,19 +239,22 @@ paths:
           $ref: "#/definitions/Child"
       responses:
         200:
-          description: "The child was successfully edited"
+          description: "The child was edited successfully"
         400:
           description: "bad input parameter"
         403:
           description: "You have no permissions to edit this child."
         404:
           description: "Child not found"
-      x-swagger-router-controller: "Default"
+      x-swagger-router-controller: "child"
+      security:
+      - OauthSecurity:
+        - "admin"
   /child/{childId}/editPresence:
     post:
       summary: "edit a child's presence"
       description: "edit a child's presence"
-      operationId: "editPresence"
+      operationId: "editPresenceOfChild"
       consumes:
       - "application/json"
       parameters:
@@ -234,37 +278,11 @@ paths:
           description: "You have no permissions to edit this child's presence."
         404:
           description: "Child not found"
-      x-swagger-router-controller: "Default"
-  /child/{childId}/setParent:
-    post:
-      summary: "set a child's parent"
-      description: "set a child's parent"
-      operationId: "setParent"
-      consumes:
-      - "text/plain"
-      parameters:
-      - name: "childId"
-        in: "path"
-        description: "The id of the child"
-        required: true
-        type: "integer"
-      - in: "body"
-        name: "parentId"
-        description: "The id of the childs parent."
-        required: true
-        schema:
-          type: "integer"
-          example: 51
-      responses:
-        200:
-          description: "The parent was successfully set."
-        400:
-          description: "bad input parameter"
-        403:
-          description: "You have no permissions to set a child's parent."
-        404:
-          description: "Child or parent not found"
-      x-swagger-router-controller: "Default"
+      x-swagger-router-controller: "child"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
   /createChild:
     post:
       summary: "create a child"
@@ -276,17 +294,30 @@ paths:
       - in: "body"
         name: "child"
         description: "A child object to create"
-        required: false
+        required: true
         schema:
-          $ref: "#/definitions/Child"
+          required:
+            - name
+            - parentId
+          properties:
+            name:
+              type: string
+            parentId:
+              type: integer
       responses:
         200:
-          description: "The child was successfully created."
+          description: "The id of the child"
+          schema:
+            type: integer
+            minimum: 1
         400:
           description: "bad input parameter"
         403:
           description: "You have no permissions to create a child."
-      x-swagger-router-controller: "Default"
+      x-swagger-router-controller: "child"
+      security:
+      - OauthSecurity:
+        - "admin"
   /group/{groupId}:
     get:
       summary: "Gets a group"
@@ -312,6 +343,11 @@ paths:
         404:
           description: "Group not found"
       x-swagger-router-controller: "group"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
+        - "parent"
   /group/{groupId}/addTeacher:
     post:
       summary: "adds a teacher"
@@ -344,6 +380,9 @@ paths:
         404:
           description: "teacher not found"
       x-swagger-router-controller: "Default"
+      security:
+      - OauthSecurity:
+        - "admin"
   /group/{groupId}/removeTeacher:
     post:
       summary: "removes a teacher"
@@ -376,6 +415,9 @@ paths:
         404:
           description: "Group or Teacher not found"
       x-swagger-router-controller: "Default"
+      security:
+      - OauthSecurity:
+        - "admin"
   /group/{groupId}/addChild:
     post:
       summary: "adds a child"
@@ -408,6 +450,9 @@ paths:
         404:
           description: "Group or child not found"
       x-swagger-router-controller: "Default"
+      security:
+      - OauthSecurity:
+        - "admin"
   /group/{groupId}/removeChild:
     post:
       summary: "removes a child"
@@ -440,6 +485,9 @@ paths:
         404:
           description: "Group or Child not found"
       x-swagger-router-controller: "Default"
+      security:
+      - OauthSecurity:
+        - "admin"
   /group/{groupId}/deleteGroup:
     post:
       summary: "deletes the group"
@@ -463,6 +511,9 @@ paths:
         404:
           description: "group can not be deleted"
       x-swagger-router-controller: "Default"
+      security:
+      - OauthSecurity:
+        - "admin"
   /group/{groupId}/getParents:
     get:
       summary: "Gets parents"
@@ -490,6 +541,11 @@ paths:
         404:
           description: "Group not found"
       x-swagger-router-controller: "Default"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
+        - "parent"
   /group/{groupId}/getTeachers:
     get:
       summary: "Gets teachers"
@@ -517,6 +573,11 @@ paths:
         404:
           description: "Group not found"
       x-swagger-router-controller: "Default"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
+        - "parent"
   /group/{groupId}/getUsers:
     get:
       summary: "Gets users"
@@ -544,6 +605,11 @@ paths:
         404:
           description: "group not found"
       x-swagger-router-controller: "Default"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
+        - "parent"
   /group/{groupId}/getChildren:
     get:
       summary: "Gets children"
@@ -571,6 +637,11 @@ paths:
         404:
           description: "Group not found"
       x-swagger-router-controller: "Default"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
+        - "parent"
   /group/{groupId}/getPosts:
     get:
       summary: "Gets posts"
@@ -598,6 +669,11 @@ paths:
         404:
           description: "Group not found"
       x-swagger-router-controller: "Default"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
+        - "parent"
   /group/{groupId}/post/{postId}:
     get:
       summary: "Gets a post"
@@ -628,6 +704,11 @@ paths:
         404:
           description: "Post not found"
       x-swagger-router-controller: "Default"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
+        - "parent"
   /group/{groupId}/post/{postId}/like:
     post:
       summary: "makes a like"
@@ -658,6 +739,11 @@ paths:
         404:
           description: "Post not found"
       x-swagger-router-controller: "Default"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
+        - "parent"
   /group/{groupId}/post/{postId}/vote:
     post:
       summary: "makes a vote"
@@ -694,6 +780,11 @@ paths:
         404:
           description: "Post not found"
       x-swagger-router-controller: "Default"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
+        - "parent"
   /group/{groupId}/post/{postId}/edit:
     post:
       summary: "edits the post"
@@ -730,6 +821,11 @@ paths:
         404:
           description: "Post not found"
       x-swagger-router-controller: "Default"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
+        - "parent"
   /group/{groupId}/post/{postId}/comment:
     post:
       summary: "makes a comment"
@@ -766,6 +862,11 @@ paths:
         404:
           description: "Post not found"
       x-swagger-router-controller: "Default"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
+        - "parent"
 definitions:
   Group:
     required:
@@ -1320,7 +1421,7 @@ definitions:
     - "name"
     - "notes"
     - "parent"
-    - "presence"
+    - "presences"
     properties:
       id:
         type: "integer"
@@ -1330,7 +1431,7 @@ definitions:
         example: "John Doe"
       parent:
         $ref: "#/definitions/User"
-      presence:
+      presences:
         type: "array"
         items:
           $ref: "#/definitions/Presence"

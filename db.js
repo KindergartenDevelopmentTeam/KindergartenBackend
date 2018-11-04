@@ -42,12 +42,14 @@ module.exports.transaction = (callback) => new Promise(async (resolve, reject) =
 })
 
 module.exports.query = (query, data = []) => new Promise((resolve, reject) => {
-    getConnection.then(connection => {
-        connection.query(query, data, (error, data) => {
-            if (error) return reject(error)
-            return resolve(data)
+    getConnection
+        .then(connection => {
+            connection.query(query, data, (error, data) => {
+                if (error) return reject(error)
+                return resolve(data)
+            })
         })
-    })
+        .catch(reject)
 })
 
 module.exports.queryWithConnection = (connection, query, data = []) => new Promise((resolve, reject) => {
