@@ -1,12 +1,12 @@
 const { query } = require('../db')
 
-const notFoundError = require('../errors/404')
+const responses = require('../responses')
 
 module.exports = {
     getPollById: pollId => new Promise(async (resolve, reject) => {
 
         const polls = await query(`SELECT * from poll WHERE id = ?`, [pollId])
-        if (polls.length === 0) return reject(notFoundError())
+        if (polls.length === 0) return reject(responses.notFound())
 
         const poll = polls[0]
         const options = await this.getOptionsForPoll(pollId)

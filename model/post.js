@@ -1,6 +1,6 @@
 const { query } = require('../db')
 
-const notFoundError = require('../errors/404')
+const responses = require('../responses')
 
 const poll = require('./poll')
 const image = require('./image')
@@ -26,7 +26,7 @@ module.exports = {
     getPostById: postId => new Promise(async (resolve, reject) => {
         const posts = await query(`SELECT * FROM post WHERE id = ?`, [postId])
 
-        if (posts.length === 0) return reject(notFoundError())
+        if (posts.length === 0) return reject(responses.notFound())
 
         const post = posts[0]
         const poll = post.pollId ? await poll.getOptionsForPoll(post.pollId) : null
