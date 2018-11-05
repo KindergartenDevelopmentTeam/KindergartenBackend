@@ -241,7 +241,7 @@ function getRefreshToken(refreshToken) {
 }
 
 function validateScope(user, client) {
-    return client.scope.split(' ').includes(user.scope)
+    return client.scope.split(' ').includes(user.scope) ? scope : false
 }
 
 function verifyScope(token, scope) {
