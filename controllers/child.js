@@ -15,11 +15,7 @@ module.exports = {
             let child = await childModel.getChild(childId)
             console.log(child)
             child = (await childModel.appendNotesToChildren([child]))[0]
-            console.log(child)
-
             child = (await childModel.appendPresenceToChildren([child]))[0]
-            console.log(child)
-
 
             writer.writeJson(res)(child)
 

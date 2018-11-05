@@ -1,4 +1,4 @@
-const { query, transaction, queryWithConnection } = require('../db')
+const { query, querySingle, transaction, queryWithConnection } = require('../db')
 const responses = require('../responses')
 
 module.exports = {
@@ -8,7 +8,7 @@ module.exports = {
         WHERE cig.groupId = ?
     `, [groupId]),
 
-    getChild: (childId) => query(`
+    getChild: (childId) => querySingle(`
             SELECT * FROM child
             WHERE id = ?
     `, [childId]),
@@ -17,9 +17,9 @@ module.exports = {
         UPDATE child SET name = ?, parentId = ? WHERE id = ?
     `, [child.name, child.parentId, child.id]),
 
-    appendNotesToChildren: (children) => new Promise(((resolve, reject) => {
+    appendNotesToChildren: (children) => new Promise(async (resolve, reject) => {
         try {
-            const childrenWithNotes = children.map(async child => {
+            const childrenWithNotes = await Promise.all(children.map(async child => {
                 const notes = await query(`SELECT *
                                            FROM note
                                            WHERE childId = ?`, [child.id])
@@ -28,17 +28,17 @@ module.exports = {
                     ...child,
                     notes: notes
                 }
-            })
+            }))
 
             resolve(childrenWithNotes)
         } catch (error) {
             reject(error)
         }
-    })),
+    }),
 
-    appendPresenceToChildren: (children) => new Promise(((resolve, reject) => {
+    appendPresenceToChildren: (children) => new Promise(async (resolve, reject) => {
         try {
-            const childrenWithPresences = children.map(async child => {
+            const childrenWithPresences = await Promise.all(children.map(async child => {
                 const presences = await query(`SELECT *
                                            FROM presence
                                            WHERE childId = ?`, [child.id])
@@ -47,13 +47,13 @@ module.exports = {
                     ...child,
                     presences: presences
                 }
-            })
+            }))
 
             resolve(childrenWithPresences)
         } catch (error) {
             reject(error)
         }
-    })),
+    }),
 
     createNote: (childId, note) => query(`
         INSERT INTO note (childId, note) VALUES (?, ?)

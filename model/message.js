@@ -26,13 +26,6 @@ const messageModel = module.exports = {
                 WHERE ${whereStr};
             `, userIds)
 
-            console.log(`
-                SELECT thread.* FROM thread
-                JOIN userInThread AS uitMain ON uitMain.threadId = thread.id
-                ${joinStr}
-                WHERE ${whereStr};
-            `)
-
             if (threads.length === 0) { // create
                 const threads = await messageModel.createThread(userIds, null)
                 return resolve(threads[0])

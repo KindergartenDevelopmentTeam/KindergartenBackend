@@ -52,6 +52,18 @@ module.exports.query = (query, data = []) => new Promise((resolve, reject) => {
         .catch(reject)
 })
 
+module.exports.querySingle = (query, data = []) => new Promise((resolve, reject) => {
+    getConnection
+        .then(connection => {
+            connection.query(query, data, (error, data) => {
+                if (error) return reject(error)
+                if (data.length === 0) return resolve(null)
+                return resolve(data[0])
+            })
+        })
+        .catch(reject)
+})
+
 module.exports.queryWithConnection = (connection, query, data = []) => new Promise((resolve, reject) => {
     connection.query(query, data, (error, data) => {
         if (error) return reject(error)
