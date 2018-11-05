@@ -237,22 +237,12 @@ function getRefreshToken(refreshToken) {
     });
 }
 
-/*
-function validateScope(user, client, scope) {
-  return (user.scope === scope && client.scope === scope && scope !== null) ? scope : false
-}
-*/
-
 function validateScope(user, client) {
-    console.log(JSON.stringify({
-        user: user,
-        client: client
-    }, null, 2))
-    return user.scope === client.scope
+    return client.scope.split(' ').includes(user.scope)
 }
 
 function verifyScope(token, scope) {
-    return token.scope === scope
+    return scope.split(' ').includes(token.scope)
 }
 
 module.exports = {
