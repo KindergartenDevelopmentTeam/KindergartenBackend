@@ -4,15 +4,12 @@
 
 module.exports = {
   sql: {
-    database: 'oauth',
+    database: 'kindergarten',
     username: 'root',
     password: 'secretPassword',
     dialect: 'mysql', // PostgreSQL, MySQL, MariaDB, SQLite and MSSQL See more: http://docs.sequelizejs.com/en/latest/
     logging: true,
     timezone: '+05:30',
-  },
-  mongo: {
-    uri: 'mongodb://gloryque:intranet@192.168.0.200:27017/gloryque_quarc'
   },
   seedDB:false,
   seedMongoDB:false,
