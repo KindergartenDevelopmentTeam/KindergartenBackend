@@ -69,7 +69,7 @@ function getUser(username, password) {
       attributes: ['id', 'username', 'password', 'scope'],
     })
     .then(async function (user) {
-      const goodPassword = await bcrypt.compare(user.password, password)
+      const goodPassword = await bcrypt.compare(password, user.password)
       return goodPassword ? user.toJSON() : false;
     })
     .catch(function (err) {
