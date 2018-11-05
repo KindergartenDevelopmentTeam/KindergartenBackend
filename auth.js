@@ -1,4 +1,4 @@
-const authenticate = require('./oauth/components/oauth/authenticate')
+const authenticate = require('./oauth2/components/oauth/authenticate')
 
 function getScopes(url) {
     switch (url) {
