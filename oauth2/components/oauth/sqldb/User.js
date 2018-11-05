@@ -16,7 +16,7 @@ module.exports = function(sequelize, DataTypes) {
     password: DataTypes.STRING(32),
     scope: DataTypes.STRING
   }, {
-    tableName: 'users', // oauth_users
+    tableName: 'user', // oauth_users
     timestamps: false,
     underscored: true,
 

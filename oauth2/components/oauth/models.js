@@ -10,6 +10,8 @@ var OAuthAccessToken = sqldb.OAuthAccessToken;
 var OAuthAuthorizationCode = sqldb.OAuthAuthorizationCode;
 var OAuthRefreshToken = sqldb.OAuthRefreshToken;
 
+const bcrypt = require('bcrypt')
+
 function getAccessToken(bearerToken) {
   return OAuthAccessToken
     .findOne({
@@ -66,8 +68,9 @@ function getUser(username, password) {
       where: {username: username},
       attributes: ['id', 'username', 'password', 'scope'],
     })
-    .then(function (user) {
-      return user.password == password ? user.toJSON() : false;
+    .then(async function (user) {
+      const goodPassword = await bcrypt.compare(user.password, password)
+      return goodPassword ? user.toJSON() : false;
     })
     .catch(function (err) {
       console.log("getUser - Err: ", err)
