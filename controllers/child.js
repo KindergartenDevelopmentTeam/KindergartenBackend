@@ -13,6 +13,7 @@ module.exports = {
         try {
 
             let child = await childModel.getChild(childId)
+            console.log(child)
             child = (await childModel.appendNotesToChildren([child]))[0]
             child = (await childModel.appendPresenceToChildren([child]))[0]
 
