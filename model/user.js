@@ -2,17 +2,28 @@ const { query } = require('../db')
 const responses = require('../responses')
 
 module.exports = {
+    doesUserExists: userId => new Promise(async (resolve, reject) => {
+        try {
+            const users = await query(`SELECT *
+                                       from user
+                                       WHERE id = ?`, [userId])
+            resolve(users.length > 0)
+        } catch (error) {
+            reject(error)
+        }
+    }),
+
     getUsersInGroup: (groupId) => query(`
-            SELECT * FROM user
+            SELECT user.id, user.name, user.scope, user.username FROM user
             JOIN usersInGroup uIG on user.id = uIG.userId
             WHERE uIG.groupId = ?
         `, [groupId]),
 
     getUsersInGroupByRole: (groupId, role) => query(`
-            SELECT * FROM user
+            SELECT user.id, user.name, user.scope, user.username FROM user
             JOIN usersInGroup uIG on user.id = uIG.userId
             WHERE uIG.groupId = ?
-              AND roleId = ?
+              AND scope = ?
         `, [groupId, role]),
 
     getUserById: (userId) => new Promise((resolve, reject) => {

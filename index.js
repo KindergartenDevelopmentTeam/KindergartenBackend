@@ -47,7 +47,7 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
     })
 
     // authentication
-    app.use(require('./auth'))
+    //app.use(require('./auth'))
 
     // Route validated requests to appropriate controller
     app.use(middleware.swaggerRouter(options))

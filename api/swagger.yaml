@@ -348,11 +348,11 @@ paths:
         - "admin"
         - "teacher"
         - "parent"
-  /group/{groupId}/addTeacher:
+  /group/{groupId}/addUser:
     post:
-      summary: "adds a teacher"
-      description: "adds a teacher to the group"
-      operationId: "addTeacher"
+      summary: "adds a user"
+      description: "adds a user to the group"
+      operationId: "addUserToGroup"
       consumes:
       - "text/plain"
       produces:
@@ -364,30 +364,30 @@ paths:
         required: true
         type: "integer"
       - in: "body"
-        name: "teacherId"
-        description: "The Id of the teacher to add"
+        name: "userId"
+        description: "The Id of the user to add"
         required: true
         schema:
           type: "integer"
           example: 51
       responses:
         200:
-          description: "Teacher added to the group."
+          description: "User added to the group."
         400:
           description: "bad input parameter"
         403:
-          description: "The user with the given id is not a teacher"
+          description: "You have no permissions to add somebody from this group"
         404:
-          description: "teacher not found"
-      x-swagger-router-controller: "Default"
+          description: "Group or User not found"
+      x-swagger-router-controller: "group"
       security:
       - OauthSecurity:
         - "admin"
-  /group/{groupId}/removeTeacher:
+  /group/{groupId}/removeUser:
     post:
-      summary: "removes a teacher"
-      description: "removes a teacher from the group"
-      operationId: "removeTeacher"
+      summary: "removes a user"
+      description: "removes a user from the group"
+      operationId: "removeUserFromGroup"
       consumes:
       - "text/plain"
       produces:
@@ -399,22 +399,22 @@ paths:
         required: true
         type: "integer"
       - in: "body"
-        name: "teacher"
-        description: "The id of the teacher to remove"
+        name: "userId"
+        description: "The id of the user to remove"
         required: false
         schema:
           type: "integer"
           example: 51
       responses:
         200:
-          description: "Teacher successfully removed from the gorup"
+          description: "User successfully removed from the gorup"
         400:
           description: "bad input parameter"
         403:
           description: "You have no permissions to remove somebody from this group"
         404:
-          description: "Group or Teacher not found"
-      x-swagger-router-controller: "Default"
+          description: "Group or User not found"
+      x-swagger-router-controller: "group"
       security:
       - OauthSecurity:
         - "admin"

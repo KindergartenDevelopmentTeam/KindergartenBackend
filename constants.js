@@ -1,7 +1,7 @@
 module.exports = {
     roles: {
-        parent: 1,
-        teacher: 2,
-        admin: 3
+        parent: 'parent',
+        teacher: 'teacher',
+        admin: 'admin'
     }
 }
