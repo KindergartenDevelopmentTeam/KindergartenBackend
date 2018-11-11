@@ -2,6 +2,18 @@ const { query, querySingle, transaction, queryWithConnection } = require('../db'
 const responses = require('../responses')
 
 module.exports = {
+    doesChildExists: childId => new Promise(async (resolve, reject) => {
+        try {
+            const children = await query(`SELECT *
+                                          FROM child
+                                          WHERE id = ?`, childId)
+
+            resolve(children.length > 0)
+        } catch (error) {
+            reject(error)
+        }
+    }),
+
     getChildrenFromGroup: (groupId) => query(`
         SELECT child.* FROM child
         JOIN childInGroup cig on child.id = cig.childId

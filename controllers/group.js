@@ -30,3 +30,23 @@ module.exports.removeUserFromGroup = (req, res, next) => {
         .then(() => writer.writeJson(res)(responses.success()))
         .catch(next)
 }
+
+module.exports.addChildToGroup = (req, res, next) => {
+    const groupId = req.swagger.params.groupId.value
+    const childId = req.swagger.params.childId.value
+
+    groupModel
+        .addChild(groupId, childId)
+        .then(() => writer.writeJson(res)(responses.success()))
+        .catch(next)
+}
+
+module.exports.removeChildFromGroup = (req, res, next) => {
+    const groupId = req.swagger.params.groupId.value
+    const childId = req.swagger.params.childId.value
+
+    groupModel
+        .removeChild(groupId, childId)
+        .then(() => writer.writeJson(res)(responses.success()))
+        .catch(next)
+}

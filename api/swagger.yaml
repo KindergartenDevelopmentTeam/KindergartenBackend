@@ -422,7 +422,7 @@ paths:
     post:
       summary: "adds a child"
       description: "adds a child to the group"
-      operationId: "addChild"
+      operationId: "addChildToGroup"
       consumes:
       - "text/plain"
       produces:
@@ -449,7 +449,7 @@ paths:
           description: "You have no permissions to add a child to this group"
         404:
           description: "Group or child not found"
-      x-swagger-router-controller: "Default"
+      x-swagger-router-controller: "group"
       security:
       - OauthSecurity:
         - "admin"
@@ -457,7 +457,7 @@ paths:
     post:
       summary: "removes a child"
       description: "removes a child from the group"
-      operationId: "removeChild"
+      operationId: "removeChildFromGroup"
       consumes:
       - "text/plain"
       produces:
@@ -469,7 +469,7 @@ paths:
         required: true
         type: "integer"
       - in: "body"
-        name: "child"
+        name: "childId"
         description: "The id of the child to remove from the gorup"
         required: false
         schema:
@@ -484,7 +484,7 @@ paths:
           description: "You have no permissions to remove a child from this group"
         404:
           description: "Group or Child not found"
-      x-swagger-router-controller: "Default"
+      x-swagger-router-controller: "group"
       security:
       - OauthSecurity:
         - "admin"
