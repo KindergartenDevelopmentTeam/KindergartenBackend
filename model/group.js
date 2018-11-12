@@ -60,6 +60,7 @@ const group = module.exports = {
                 posts: await post.getPostsByGroupId(group.id),
                 teachers: await user.getUsersInGroupByRole(group.id, roles.teacher),
                 parents: await user.getUsersInGroupByRole(group.id, roles.parent),
+                users: await user.getUsersInGroup(group.id),
                 children: await child.getChildrenFromGroup(group.id)
             }
 

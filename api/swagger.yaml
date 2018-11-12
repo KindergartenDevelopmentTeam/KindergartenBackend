@@ -474,7 +474,7 @@ paths:
         type: "integer"
       responses:
         200:
-          description: "Group sucecssfully deleted"
+          description: "Group successfully deleted"
         400:
           description: "bad input parameter"
         403:
@@ -485,102 +485,6 @@ paths:
       security:
       - OauthSecurity:
         - "admin"
-  /group/{groupId}/getParents:
-    get:
-      summary: "Gets parents"
-      description: "Gets a list of all the parents of children in the group"
-      operationId: "getParents"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "groupId"
-        in: "path"
-        description: "The id of the group"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "The parents of the group"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/User"
-        400:
-          description: "bad input parameter"
-        403:
-          description: "You have no permissions to view this group"
-        404:
-          description: "Group not found"
-      x-swagger-router-controller: "Default"
-      security:
-      - OauthSecurity:
-        - "admin"
-        - "teacher"
-        - "parent"
-  /group/{groupId}/getTeachers:
-    get:
-      summary: "Gets teachers"
-      description: "Gets a list of all the teachers of the group"
-      operationId: "getTeachers"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "groupId"
-        in: "path"
-        description: "The id of the group"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "The teachers of the group"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/User"
-        400:
-          description: "bad input parameter"
-        403:
-          description: "You have no permissions to view this group"
-        404:
-          description: "Group not found"
-      x-swagger-router-controller: "Default"
-      security:
-      - OauthSecurity:
-        - "admin"
-        - "teacher"
-        - "parent"
-  /group/{groupId}/getUsers:
-    get:
-      summary: "Gets users"
-      description: "Gets a list of all the teachers and parents of the group"
-      operationId: "getUsers"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "groupId"
-        in: "path"
-        description: "The id of the group"
-        required: true
-        type: "integer"
-      responses:
-        200:
-          description: "The users of the group"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/User"
-        400:
-          description: "bad input parameter"
-        403:
-          description: "You have no permissions to view this group"
-        404:
-          description: "group not found"
-      x-swagger-router-controller: "Default"
-      security:
-      - OauthSecurity:
-        - "admin"
-        - "teacher"
-        - "parent"
   /group/{groupId}/getChildren:
     get:
       summary: "Gets children"
