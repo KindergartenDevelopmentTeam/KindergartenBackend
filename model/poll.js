@@ -5,20 +5,28 @@ const responses = require('../responses')
 module.exports = {
     getPollById: pollId => new Promise(async (resolve, reject) => {
 
-        const polls = await query(`SELECT * from poll WHERE id = ?`, [pollId])
-        if (polls.length === 0) return reject(responses.notFound())
+        try {
 
-        const poll = polls[0]
-        const options = await this.getOptionsForPoll(pollId)
-        const votes = await this.getVotesForPoll(pollId)
+            const polls = await query(`SELECT *
+                                       from poll
+                                       WHERE id = ?`, [pollId])
+            if (polls.length === 0) return reject(responses.notFound())
 
-        const fullPoll = {
-            ...poll,
-            options: options,
-            votes: votes
+            const poll = polls[0]
+            const options = await this.getOptionsForPoll(pollId)
+            const votes = await this.getVotesForPoll(pollId)
+
+
+            const fullPoll = {
+                ...poll,
+                options: options,
+                votes: votes
+            }
+
+            resolve(fullPoll)
+        } catch (error) {
+            reject(error)
         }
-
-        resolve(fullPoll)
     }),
 
     getVotesForPoll: pollId => query(`SELECT * FROM vote WHERE pollId = ?`, [pollId]),

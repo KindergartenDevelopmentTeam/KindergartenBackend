@@ -4,8 +4,13 @@ module.exports = {
         error.code = 404;
         return error;
     },
+    noPermission: () => {
+        let error = new Error('You have no permission to do this!')
+        error.code = 403;
+        return error;
+    },
     success: (message) => ({
             code: 200,
             message: message || 'Success!'
-    })
+    }),
 }

@@ -62,3 +62,4 @@ module.exports.deleteGroup = (req, res, next) => {
         .then(() => writer.writeJson(res)(responses.success()))
         .catch(next)
 }
+
