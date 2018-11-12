@@ -283,41 +283,6 @@ paths:
       - OauthSecurity:
         - "admin"
         - "teacher"
-  /createChild:
-    post:
-      summary: "create a child"
-      description: "crete a child"
-      operationId: "createChild"
-      consumes:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "child"
-        description: "A child object to create"
-        required: true
-        schema:
-          required:
-            - name
-            - parentId
-          properties:
-            name:
-              type: string
-            parentId:
-              type: integer
-      responses:
-        200:
-          description: "The id of the child"
-          schema:
-            type: integer
-            minimum: 1
-        400:
-          description: "bad input parameter"
-        403:
-          description: "You have no permissions to create a child."
-      x-swagger-router-controller: "child"
-      security:
-      - OauthSecurity:
-        - "admin"
   /group/{groupId}:
     get:
       summary: "Gets a group"
@@ -424,7 +389,7 @@ paths:
       description: "adds a child to the group"
       operationId: "addChildToGroup"
       consumes:
-      - "text/plain"
+      - "application/json"
       produces:
       - "application/json"
       parameters:
@@ -434,12 +399,18 @@ paths:
         required: true
         type: "integer"
       - in: "body"
-        name: "childId"
-        description: "The id of the child to add"
+        name: "child"
+        description: "The child to create and add"
         required: true
         schema:
-          type: "integer"
-          example: 51
+          required:
+          - name
+          - parentId
+          properties:
+            name:
+              type: string
+            parentId:
+              type: integer
       responses:
         200:
           description: "Child successfully added to the group"
@@ -510,7 +481,7 @@ paths:
           description: "Only an admin can delete a gorup"
         404:
           description: "group can not be deleted"
-      x-swagger-router-controller: "Default"
+      x-swagger-router-controller: "group"
       security:
       - OauthSecurity:
         - "admin"

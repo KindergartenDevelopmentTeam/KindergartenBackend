@@ -1,7 +1,7 @@
 const { query, querySingle, transaction, queryWithConnection } = require('../db')
 const responses = require('../responses')
 
-module.exports = {
+const child = module.exports = {
     doesChildExists: childId => new Promise(async (resolve, reject) => {
         try {
             const children = await query(`SELECT *
@@ -93,20 +93,67 @@ module.exports = {
 
     createChild: (child) => new Promise(async (resolve, reject) => {
         try {
-            const id = await transaction(async (connection) => {
-                await queryWithConnection(
-                    connection,
-                        `INSERT INTO child (name, parentId)
-                         VALUES (?, ?)`,
-                    [child.name, child.parentId]
-                )
+            await transaction(async (connection) => {
+                try {
+                    await queryWithConnection(
+                        connection,
+                            `INSERT INTO child (name, parentId)
+                             VALUES (?, ?)`,
+                        [child.name, child.parentId]
+                    )
 
-                const id = (await queryWithConnection(connection, `SELECT LAST_INSERT_ID() AS id;`))[0]['id']
+                    const id = (await queryWithConnection(connection, `SELECT LAST_INSERT_ID() AS id;`))[0]['id']
 
-                return id
+                    connection.commit()
+
+                    resolve(id)
+
+                } catch (error) {
+                    connection.rollback()
+                    reject(error)
+                }
+            })
+        } catch (error) {
+            reject(error)
+        }
+    }),
+
+    deleteChild: childId => new Promise(async (resolve, reject) => {
+        try {
+
+            if(!(await child.doesChildExists(childId))) return reject(responses.notFound())
+
+            transaction(async connection => {
+                try {
+
+                    await queryWithConnection(connection, `DELETE
+                                                           FROM presence
+                                                           WHERE childId = ?`, [childId])
+
+                    await queryWithConnection(connection, `DELETE
+                                                           FROM note
+                                                           WHERE childId = ?`, [childId])
+
+                    await queryWithConnection(connection, `DELETE
+                                                           FROM childInGroup
+                                                           WHERE childId = ?`, [childId])
+
+                    await queryWithConnection(connection, `DELETE
+                                                           FROM child
+                                                           WHERE id = ?`, [childId])
+
+                    connection.commit()
+
+                    resolve()
+
+                } catch (error) {
+                    connection.rollback()
+                    reject(error)
+                }
             })
 
-            resolve(id)
+            await query(`DELETE FROM child WHERE id = ?`, [childId])
+
         } catch (error) {
             reject(error)
         }
