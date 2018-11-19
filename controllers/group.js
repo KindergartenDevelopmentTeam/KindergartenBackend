@@ -1,5 +1,6 @@
 const groupModel = require('../model/group')
 const childModel = require('../model/child')
+const userModel = require('../model/user')
 const writer = require('../utils/writer')
 const responses = require("../responses");
 
@@ -63,3 +64,24 @@ module.exports.deleteGroup = (req, res, next) => {
         .catch(next)
 }
 
+module.exports.createGroup = (req, res, next) => {
+    const name = req.swagger.params.name.value
+
+    groupModel
+        .createGroup(name)
+        .then(groupId => ({id: groupId}))
+        .then(writer.writeJson(res))
+        .catch(next)
+}
+
+module.exports.getGroups = (req, res, next) => {
+    const currentUserId = 1
+
+    userModel
+        .getScopeOfUser(currentUserId)
+        .then(scope => {
+            return groupModel.getGroups(currentUserId, scope)
+        })
+        .then(writer.writeJson(res))
+        .catch(next)
+}

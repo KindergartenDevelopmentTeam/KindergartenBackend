@@ -545,7 +545,67 @@ paths:
         - "admin"
         - "teacher"
         - "parent"
-  /group/{groupId}/post/{postId}/vote:
+  /group/{groupId}/createPost:
+    post:
+      summary: "create a post"
+      description: "create a post inside a group"
+      operationId: "createPost"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "groupId"
+        in: "path"
+        description: "The id of the group"
+        required: true
+        type: "integer"
+      - name: "post"
+        in: "body"
+        description: "The post to create"
+        schema:
+          required:
+          - content
+          properties:
+            content:
+              type: string
+              example: "Hozzon mindenki magaval sapkat holnapra"
+              description: "The text of the post"
+            poll:
+              type: object
+              properties:
+                question:
+                  type: string
+                  example: "mindenki jol van?"
+                  description: "the question of the poll"
+                answers:
+                  type: array
+                  items:
+                    type: string
+                    example: "aha, hogyne, persze"
+                    description: "The text of the answer"
+            image:
+              description: "the url of the image"
+              type: string
+      responses:
+        200:
+          description: "The id of the newly created post"
+          schema:
+            type: integer
+            example: 51
+        400:
+          description: "Bad input parameter"
+        403:
+          description: "You have no permission to create a post in this group"
+        404:
+          description: "Group not found"
+      x-swagger-router-controller: "post"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
+        - "parent"
+  /post/{postId}/vote:
     post:
       summary: "makes a vote"
       description: "makes a vote on a poll inside a post"
@@ -555,22 +615,19 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "groupId"
-        in: "path"
-        description: "The id of the group"
-        required: true
-        type: "integer"
       - name: "postId"
         in: "path"
         description: "The id of the post"
         required: true
         type: "integer"
       - in: "body"
-        name: "vote"
+        name: "option"
         description: "The vote to submit"
         required: true
         schema:
-          $ref: "#/definitions/Vote"
+          type: "integer"
+          description: "The option for the poll"
+          example: 51
       responses:
         200:
           description: "Successfully voted on poll"
@@ -580,27 +637,22 @@ paths:
           description: "You have no permission to vote"
         404:
           description: "Post not found"
-      x-swagger-router-controller: "Default"
+      x-swagger-router-controller: "post"
       security:
       - OauthSecurity:
         - "admin"
         - "teacher"
         - "parent"
-  /group/{groupId}/post/{postId}/edit:
+  /{postId}/edit:
     post:
       summary: "edits the post"
       description: "edites the text of the post"
-      operationId: "edit"
+      operationId: "editPost"
       consumes:
-      - "applicatoin/json"
+      - "application/json"
       produces:
       - "application/json"
       parameters:
-      - name: "groupId"
-        in: "path"
-        description: "The id of the group"
-        required: true
-        type: "integer"
       - name: "postId"
         in: "path"
         description: "The id of the post"
@@ -611,7 +663,29 @@ paths:
         description: "The edited post"
         required: true
         schema:
-          $ref: "#/definitions/Post"
+          required:
+          - content
+          properties:
+            content:
+              type: string
+              example: "Hozzon mindenki magaval sapkat holnapra"
+              description: "The text of the post"
+            poll:
+              type: object
+              properties:
+                question:
+                  type: string
+                  example: "mindenki jol van?"
+                  description: "the question of the poll"
+                answers:
+                  type: array
+                  items:
+                    type: string
+                    example: "aha, hogyne, persze"
+                    description: "The text of the answer"
+            image:
+              description: "the url of the image"
+              type: string
       responses:
         200:
           description: "Post successfully edited"
@@ -621,7 +695,7 @@ paths:
           description: "You have no permisison to edit this post"
         404:
           description: "Post not found"
-      x-swagger-router-controller: "Default"
+      x-swagger-router-controller: "post"
       security:
       - OauthSecurity:
         - "admin"
@@ -658,6 +732,107 @@ paths:
         404:
           description: "Post not found"
       x-swagger-router-controller: "post"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
+        - "parent"
+  /createUser:
+    post:
+      summary: "create a user"
+      description: "creates a user"
+      operationId: "createUser"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "user"
+        description: "The user"
+        required: true
+        schema:
+          required:
+          - name
+          - scope
+          - username
+          - password
+          properties:
+            name:
+              type: "string"
+              example: "John Doe"
+            scope:
+              type: "string"
+              example: "parent"
+            username:
+              type: "string"
+              example: "johndoe51"
+            password:
+              type: "string"
+              example: "abcd12345"
+      responses:
+        200:
+          description: "User successfully created"
+          schema:
+            type: "integer"
+            example: "51"
+            description: "the id of the user"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permission to create a user"
+      x-swagger-router-controller: "user"
+      security:
+      - OauthSecurity:
+        - "admin"
+  /createGroup:
+    post:
+      summary: "create a group"
+      description: "creates a group"
+      operationId: "createGroup"
+      consumes:
+      - "text/plain"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "name"
+        description: "The name of the group"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        200:
+          description: "Group successfully created"
+          schema:
+            type: "integer"
+            example: "51"
+            description: "the id of the gorup"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permission to create a group"
+      x-swagger-router-controller: "group"
+      security:
+      - OauthSecurity:
+        - "admin"
+  /getGroups:
+    get:
+      summary: "gets the groups"
+      description: "gets the groups of the user"
+      operationId: "getGroups"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "The groups"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Group"
+        400:
+          description: "bad input parameter"
+      x-swagger-router-controller: "group"
       security:
       - OauthSecurity:
         - "admin"

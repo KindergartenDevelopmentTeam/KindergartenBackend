@@ -21,6 +21,18 @@ const group = module.exports = {
         }
     }),
 
+    hasUserAccessToGroup: (groupId, userId) => new Promise(async (resolve, reject) => {
+        try {
+            const users = await query(`SELECT id
+                                       from usersInGroup
+                                       WHERE groupId = ? AND userId = ?`, [groupId, userId])
+
+            resolve(users.length > 0)
+        } catch (error) {
+            reject(error)
+        }
+    }),
+
     isUserInGroup: (groupId, userId) => new Promise(async (resolve, reject) => {
         try {
             const users = await query(`SELECT *
@@ -145,25 +157,28 @@ const group = module.exports = {
                                                                             WHERE groupId = ?`, [groupId]))
                         .map(child => child.id)
 
+                    const childrenIdSql = childrenIds.map(id => '?').join(',')
 
-                    await queryWithConnection(connection, `DELETE
+
+                    if (childrenIds.length > 0) {
+
+                        await queryWithConnection(connection, `DELETE
                                                            FROM presence
-                                                           WHERE childId IN ${childrenIdSql}`, childrenIds)
+                                                           WHERE childId IN (${childrenIdSql})`, childrenIds)
 
-                    await queryWithConnection(connection, `DELETE
+                        await queryWithConnection(connection, `DELETE
                                                            FROM note
-                                                           WHERE childId IN ${childrenIdSql}`, childrenIds)
+                                                           WHERE childId IN (${childrenIdSql})`, childrenIds)
 
-                    await queryWithConnection(connection, `DELETE
-                                                           FROM childInGroup
-                                                           WHERE groupId = ?`, [groupId])
+                        await queryWithConnection(connection, `DELETE
+                                                               FROM childInGroup
+                                                               WHERE groupId = ?`, [groupId])
 
-                    // todo test
-                    await queryWithConnection(connection, `DELETE
+                        // todo test
+                        await queryWithConnection(connection, `DELETE
                                                            FROM child
-                                                           WHERE id IN ${childrenIdSql}`, childrenIds)
-
-                    console.log(`WHERE id IN ${childrenIdSql}`)
+                                                           WHERE id IN (${childrenIdSql})`, childrenIds)
+                    }
 
                     await queryWithConnection(connection, `DELETE
                                                            FROM image
@@ -226,6 +241,45 @@ const group = module.exports = {
                 }
             })
 
+        } catch (error) {
+            reject(error)
+        }
+    }),
+    createGroup: (name) => new Promise(async (resolve, reject) => {
+        transaction(async connection => {
+            try {
+                await queryWithConnection(connection, `INSERT INTO thread (name) VALUES (?)`,
+                    [`${name} chat`])
+                const threadId = (await queryWithConnection(connection,
+                    `SELECT LAST_INSERT_ID() as id`, []))[0]['id']
+
+                await queryWithConnection(connection, `INSERT INTO \`group\` (name, threadId)
+                                                       VALUES (?, ?)`, [name, threadId])
+
+                const groupId = (await queryWithConnection(connection,
+                    `SELECT LAST_INSERT_ID() as id`, []))[0]['id']
+
+                resolve(groupId)
+
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }),
+    getGroups: (userId, scope) => new Promise(async (resolve, reject) => {
+        try {
+
+            let ids;
+
+            if (scope === "admin") {
+                ids = await query(`SELECT id FROM \`group\``)
+            } else {
+                ids = await query(`SELECT groupId FROM usersInGroup WHERE userId = ?`, [userId])
+            }
+
+            const groups = ids.map(groupId => group.getGroupById(groupId))
+
+            resolve(groups)
         } catch (error) {
             reject(error)
         }

@@ -3,6 +3,7 @@ const writer = require('../utils/writer')
 const responses = require('../responses')
 
 const postModel = require('../model/post')
+const groupModel = require('../model/group')
 
 module.exports.getPost = (req, res, next) => {
     const postId = req.swagger.params.postId.value
@@ -66,4 +67,69 @@ module.exports.commentOnPost = (req, res, next) => {
         .then(() => responses.success("successfully commented on post"))
         .then(writer.writeJson(res))
         .catch(next)
+}
+
+module.exports.createPost = (req, res, next) => {
+    const groupId = req.swagger.params.groupId.value
+    const post = req.swagger.params.post.value
+
+    console.log(`post: ${JSON.stringify(post, null, 2)}`)
+
+    const currentUserId = 1 // todo
+
+    groupModel
+        .doesGroupExists(groupId)
+        .then(doesGroupExists => {
+            if (!doesGroupExists) throw responses.notFound()
+        })
+        .then(() => groupModel.hasUserAccessToGroup(groupId, currentUserId))
+        .then(hasUserAccessToGroup => {
+            if (!hasUserAccessToGroup) throw responses.noPermission()
+        })
+        .then(() => postModel.createPost(groupId, currentUserId, post))
+        .then(postId => ({
+            ...responses.success('post successfully created'),
+            postId: postId
+        }))
+        .then(writer.writeJson(res))
+        .catch(next)
+
+}
+
+module.exports.vote = (req, res, next) => {
+    const postId = req.swagger.params.postId.value
+    const option = req.swagger.params.option.value
+
+    const currentUserId = 1 // todo
+
+    postModel
+        .vote(postId, currentUserId, option)
+        .then(() => writer.writeJson(res)(responses.success("Successfully voted on poll")))
+        .catch(next)
+}
+
+module.exports.editPost = (req, res, next) => {
+
+    const groupId = req.swagger.params.groupId.value
+    const post = req.swagger.params.post.value
+    const postId = req.swagger.params.postId.value
+
+    console.log(`post: ${JSON.stringify(post, null, 2)}`)
+
+    const currentUserId = 1 // todo
+
+    postModel
+        .hasUserPermissionToPost(currentUserId, post.id)
+        .then(hasUserPermissionToPost => {
+            if (!hasUserPermissionToPost) throw responses.noPermission()
+        })
+        .then(() => postModel.getPostById(postId))
+        .then((oldPost) => postModel.editPost(postId, post, oldPost, currentUserId))
+        .then(postId => ({
+            ...responses.success('post successfully edited'),
+            postId: postId
+        }))
+        .then(writer.writeJson(res))
+        .catch(next)
+
 }

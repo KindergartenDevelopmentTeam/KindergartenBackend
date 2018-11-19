@@ -51,5 +51,23 @@ module.exports = {
         } catch (error) {
             next(error)
         }
+    },
+
+    createUser: (req, res, next) => {
+        const user = req.swagger.params.user.value
+
+        userModel
+            .createUser(user)
+            .then(userId => ({id: userId}))
+            .then(writer.writeJson(res))
+            .catch(next)
+    },
+
+    deleteUser: (req, res, next) => {
+        const userId = req.swagger.params.userId.value
+
+        userModel.deleteUser()
+            .then(() => writer.writeJson(res)("user deleted"))
+            .catch(next)
     }
 }
