@@ -9,12 +9,11 @@ info:
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "localhost"
+host: "localhost:8080"
 basePath: "/api/"
 tags: []
 schemes:
 - "http"
-- "https"
 securityDefinitions:
   OauthSecurity:
     type: oauth2
@@ -268,7 +267,17 @@ paths:
         description: "The presence object."
         required: true
         schema:
-          $ref: "#/definitions/Presence"
+          required:
+          - "wasThere"
+          - "date"
+          properties:
+            wasThere:
+              type: "boolean"
+              example: true
+            date:
+              type: "string"
+              format: "int32"
+              example: ""
       responses:
         200:
           description: "The presence was successfully set"
@@ -587,6 +596,15 @@ paths:
             image:
               description: "the url of the image"
               type: string
+            path:
+              type: array
+              items:
+                type: object
+                properties:
+                  x:
+                    type: number
+                  y:
+                    type: number
       responses:
         200:
           description: "The id of the newly created post"
@@ -643,7 +661,7 @@ paths:
         - "admin"
         - "teacher"
         - "parent"
-  /{postId}/edit:
+  /post/{postId}/edit:
     post:
       summary: "edits the post"
       description: "edites the text of the post"
@@ -659,7 +677,7 @@ paths:
         required: true
         type: "integer"
       - in: "body"
-        name: "content"
+        name: "post"
         description: "The edited post"
         required: true
         schema:
@@ -686,6 +704,15 @@ paths:
             image:
               description: "the url of the image"
               type: string
+            path:
+              type: array
+              items:
+                type: object
+                properties:
+                  x:
+                    type: number
+                  y:
+                    type: number
       responses:
         200:
           description: "Post successfully edited"

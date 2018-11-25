@@ -94,7 +94,7 @@ module.exports = {
             let originalChild = await childModel.getChild(childId)
             if (!originalChild) return next(responses.notFound())
 
-            await childModel.setPresence(presence)
+            await childModel.setPresence(childId, presence)
 
             writer.writeJson(res)(responses.success('The presence was successfully set'))
 

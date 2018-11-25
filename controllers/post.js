@@ -110,7 +110,6 @@ module.exports.vote = (req, res, next) => {
 
 module.exports.editPost = (req, res, next) => {
 
-    const groupId = req.swagger.params.groupId.value
     const post = req.swagger.params.post.value
     const postId = req.swagger.params.postId.value
 
@@ -119,16 +118,13 @@ module.exports.editPost = (req, res, next) => {
     const currentUserId = 1 // todo
 
     postModel
-        .hasUserPermissionToPost(currentUserId, post.id)
+        .hasUserPermissionToPost(currentUserId, postId)
         .then(hasUserPermissionToPost => {
             if (!hasUserPermissionToPost) throw responses.noPermission()
         })
         .then(() => postModel.getPostById(postId))
         .then((oldPost) => postModel.editPost(postId, post, oldPost, currentUserId))
-        .then(postId => ({
-            ...responses.success('post successfully edited'),
-            postId: postId
-        }))
+        .then(() => responses.success('post successfully edited'))
         .then(writer.writeJson(res))
         .catch(next)
 

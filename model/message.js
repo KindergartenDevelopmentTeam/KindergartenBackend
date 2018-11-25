@@ -11,6 +11,7 @@ const messageModel = module.exports = {
     `, [threadId, content]),
 
     getThread: (userIds) => new Promise(async (resolve, reject) => {
+        console.log(`userIds: ${JSON.stringify(userIds, null, 2)}`)
         try {
             const joins = userIds.map((userId, index) =>
                 `JOIN userInThread AS \`uit${index}\` ON \`uit${index}\`.threadId = thread.id`)
@@ -49,7 +50,9 @@ const messageModel = module.exports = {
                 await queryWithConnection(connection, `INSERT INTO thread (\`name\`) VALUES (?)`, [name])
                 const id = (await queryWithConnection(connection, `SELECT LAST_INSERT_ID() as id;`))[0]['id']
 
-                const ids = flatMap(userIds, userId => [id, userId])
+                const ids = flatMap(userIds, userId => [userIds, userId])
+
+                console.log(`ids: ${JSON.stringify(ids, null, 2)}`)
 
                 await queryWithConnection(
                     connection,

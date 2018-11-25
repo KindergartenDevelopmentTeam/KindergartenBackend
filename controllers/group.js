@@ -1,6 +1,7 @@
 const groupModel = require('../model/group')
 const childModel = require('../model/child')
 const userModel = require('../model/user')
+const postModel = require('../model/post')
 const writer = require('../utils/writer')
 const responses = require("../responses");
 
@@ -37,9 +38,14 @@ module.exports.addChildToGroup = (req, res, next) => {
     const groupId = req.swagger.params.groupId.value
     const child = req.swagger.params.child.value
 
-    childModel
-        .createChild(child)
+    userModel
+        .doesUserExists(child.parentId)
+        .then(doesUserExists => {
+            if (!doesUserExists) throw responses.notFound()
+        })
+        .then(() =>  childModel.createChild(child))
         .then(childId => groupModel.addChild(groupId, childId))
+        .then(() => groupModel.addUser(groupId, child.parentId))
         .then(() => writer.writeJson(res)(responses.success()))
         .catch(next)
 }

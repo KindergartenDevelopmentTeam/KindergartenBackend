@@ -19,7 +19,8 @@ module.exports = {
         const userId = req.swagger.params.userId.value
         const content = req.swagger.params.message.value
 
-        const currentUserId = req.userId;
+        //const currentUserId = req.userId;
+        const currentUserId = 1;
         try {
             const thread = await messageModel.getThread([currentUserId, userId])
 
@@ -40,7 +41,8 @@ module.exports = {
     getMessagesFromUser: async (req, res, next) => {
         const userId = req.swagger.params.userId.value
 
-        const currentUserId = req.userId;
+        //const currentUserId = req.userId;
+        const currentUserId = 1;
 
         try {
             const thread = await messageModel.getThread([currentUserId, userId])

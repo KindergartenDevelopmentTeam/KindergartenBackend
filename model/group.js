@@ -277,7 +277,9 @@ const group = module.exports = {
                 ids = await query(`SELECT groupId FROM usersInGroup WHERE userId = ?`, [userId])
             }
 
-            const groups = ids.map(groupId => group.getGroupById(groupId))
+            ids = ids.map(id => id.id)
+
+            const groups = Promise.all(ids.map(async groupId => group.getGroupById(groupId)))
 
             resolve(groups)
         } catch (error) {

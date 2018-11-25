@@ -13,4 +13,9 @@ module.exports = {
             code: 200,
             message: message || 'Success!'
     }),
+    customError: (code, message = "") => {
+        let error = new Error(message)
+        error.code = code
+        return error
+    }
 }
