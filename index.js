@@ -5,6 +5,7 @@ require('dotenv').config()
 const fs = require('fs')
 const path = require('path')
 const http = require('http')
+const cors = require('cors')
 
 const app = require('connect')()
 const swaggerTools = require('swagger-tools')
@@ -27,8 +28,11 @@ const swaggerDoc = jsyaml.safeLoad(spec)
 // Initialize the Swagger middleware
 swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
 
+    app.use(cors({allowedHeaders: ['Origin, X-Requested-With, Content-Type, Accept'], origin: function(origin, callback) {
+        callback(null, true);
+    }}));
+
     app.use((req, res, next) => {
-        console.log(`query is: ${JSON.stringify(req.query, null, 2)}`)
         next()
     })
 
