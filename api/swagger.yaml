@@ -511,7 +511,7 @@ paths:
         200:
           description: "The post with the id"
           schema:
-            $ref: "#/definitions/Post"
+            $ref: "#/definitions/KindergartenPost"
         400:
           description: "bad input parameter"
         403:
@@ -883,7 +883,7 @@ definitions:
       posts:
         type: "array"
         items:
-          $ref: "#/definitions/Post"
+          $ref: "#/definitions/KindergartenPost"
       teachers:
         type: "array"
         items:
@@ -1100,7 +1100,7 @@ definitions:
               id: 51
             name: "John Doe"
             id: 51
-  Post:
+  KindergartenPost:
     required:
     - "comments"
     - "creationDate"
