@@ -25,6 +25,30 @@ securityDefinitions:
       teacher: Teacher scope
       parent: Parent scope
 paths:
+  /currentUserId:
+    get:
+      summary: "Gets the id of the current user"
+      description: "Gets the id of the current user"
+      operationId: "getCurrentUserId"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "The user with the given id"
+          schema:
+            type: "integer"
+        400:
+          description: "Bad input parameter"
+        403:
+          description: "You have no permissions to view this user."
+        404:
+          description: "User not found"
+      x-swagger-router-controller: "user"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
+        - "parent"
   /user/{userId}:
     get:
       summary: "Gets a user"

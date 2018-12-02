@@ -27,7 +27,9 @@ module.exports = function(options){
     oauth.authenticate(request, response,options)
       .then(function (token) {
         // Request is authorized.
+          console.log(`token: ${JSON.stringify(token)}`)
         req.user = token
+        req.userId = token.User.id
         next()
       })
       .catch(function (err) {

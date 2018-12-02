@@ -6,6 +6,12 @@ const messageModel = require('../model/message');
 
 module.exports = {
 
+    getCurrentUserId: (req, res, next) => {
+        const userId = req.userId
+
+        res.end(userId.toString())
+    },
+
     getUser: (req, res, next) => {
         const userId = req.swagger.params.userId.value
 
