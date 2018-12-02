@@ -10,7 +10,7 @@ info:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 host: "kindergarten.westeurope.cloudapp.azure.com"
-basePath: "/api/"
+basePath: "/api"
 tags: []
 schemes:
 - "http"
@@ -25,6 +25,38 @@ securityDefinitions:
       teacher: Teacher scope
       parent: Parent scope
 paths:
+  /uploadPicture:
+    post:
+      summary: "upload picture"
+      description: "uploads a picture to the server in base64 encoding"
+      operationId: "uploadPicture"
+      produces:
+      - "text/plain"
+      consumes:
+      - "text/plain"
+      parameters:
+      - in: "body"
+        name: "picture"
+        description: "The picture in base64 encoding"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        200:
+          description: ""
+          schema:
+            type: "string"
+            description: "the filename of the image"
+        400:
+          description: "bad input parameter"
+        403:
+          description: "You have no permission to upload a picture."
+      x-swagger-router-controller: "image"
+      security:
+      - OauthSecurity:
+        - "admin"
+        - "teacher"
+        - "parent"
   /currentUserId:
     get:
       summary: "Gets the id of the current user"
@@ -34,15 +66,13 @@ paths:
       - "application/json"
       responses:
         200:
-          description: "The user with the given id"
+          description: "The current user's id"
           schema:
             type: "integer"
         400:
           description: "Bad input parameter"
         403:
-          description: "You have no permissions to view this user."
-        404:
-          description: "User not found"
+          description: "You have no permissions."
       x-swagger-router-controller: "user"
       security:
       - OauthSecurity:
@@ -910,7 +940,7 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/KindergartenPost"
-      teachers:
+      users:
         type: "array"
         items:
           $ref: "#/definitions/KindergartenUser"

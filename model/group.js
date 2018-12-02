@@ -67,11 +67,11 @@ const group = module.exports = {
             const group = groups[0]
 
             const fullGroup = {
-                ...group,
+                id: group.id,
+                name: group.name,
+                creationDate: group.creationDate,
                 messages: await message.getMessages(group.threadId),
                 posts: await post.getPostsByGroupId(group.id),
-                teachers: await user.getUsersInGroupByRole(group.id, roles.teacher),
-                parents: await user.getUsersInGroupByRole(group.id, roles.parent),
                 users: await user.getUsersInGroup(group.id),
                 children: await child.getChildrenFromGroup(group.id)
             }
