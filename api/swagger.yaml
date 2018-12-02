@@ -525,7 +525,7 @@ paths:
         - "teacher"
         - "parent"
   /post/{postId}/like:
-    post:
+    get:
       summary: "makes a like"
       description: "makes or removes a like on the post"
       operationId: "likePost"
