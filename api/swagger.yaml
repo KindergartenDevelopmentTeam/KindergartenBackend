@@ -43,7 +43,7 @@ paths:
         200:
           description: "The user with the given id"
           schema:
-            $ref: "#/definitions/User"
+            $ref: "#/definitions/KindergartenUser"
         400:
           description: "Bad input parameter"
         403:
@@ -142,7 +142,7 @@ paths:
         200:
           description: "The child with the id"
           schema:
-            $ref: "#/definitions/Child"
+            $ref: "#/definitions/KindergartenChild"
         400:
           description: "bad input parameter"
         403:
@@ -235,7 +235,7 @@ paths:
         description: "The modified Child object"
         required: true
         schema:
-          $ref: "#/definitions/Child"
+          $ref: "#/definitions/KindergartenChild"
       responses:
         200:
           description: "The child was edited successfully"
@@ -887,11 +887,11 @@ definitions:
       teachers:
         type: "array"
         items:
-          $ref: "#/definitions/RealUser"
+          $ref: "#/definitions/KindergartenUser"
       children:
         type: "array"
         items:
-          $ref: "#/definitions/Child"
+          $ref: "#/definitions/KindergartenChild"
       messages:
         type: "array"
         items:
@@ -1112,7 +1112,7 @@ definitions:
         type: "integer"
         example: 51
       creator:
-        $ref: "#/definitions/RealUser"
+        $ref: "#/definitions/KindergartenUser"
       content:
         type: "string"
         maxLength: 512
@@ -1213,7 +1213,7 @@ definitions:
         type: "integer"
         example: 51
       creator:
-        $ref: "#/definitions/RealUser"
+        $ref: "#/definitions/KindergartenUser"
       content:
         type: "string"
         example: "Ok, got it"
@@ -1240,7 +1240,7 @@ definitions:
         type: "integer"
         example: 51
       user:
-        $ref: "#/definitions/RealUser"
+        $ref: "#/definitions/KindergartenUser"
     example:
       id: 51
       user:
@@ -1304,7 +1304,7 @@ definitions:
         type: "integer"
         example: 51
       user:
-        $ref: "#/definitions/RealUser"
+        $ref: "#/definitions/KindergartenUser"
       option:
         type: "integer"
         example: 1
@@ -1382,7 +1382,7 @@ definitions:
       date: ""
       id: 51
       wasThere: true
-  RealUser:
+  KindergartenUser:
     required:
     - "id"
     properties:
@@ -1397,7 +1397,7 @@ definitions:
       children:
         type: "array"
         items:
-          $ref: "#/definitions/Child"
+          $ref: "#/definitions/KindergartenChild"
   Role:
     required:
     - "id"
@@ -1411,7 +1411,7 @@ definitions:
     example:
       name: "Admin"
       id: 51
-  Child:
+  KindergartenChild:
     required:
     - "id"
     - "name"
@@ -1426,7 +1426,7 @@ definitions:
         type: "string"
         example: "John Doe"
       parent:
-        $ref: "#/definitions/RealUser"
+        $ref: "#/definitions/KindergartenUser"
       presences:
         type: "array"
         items:
