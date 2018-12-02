@@ -9,7 +9,7 @@ info:
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "localhost:8080"
+host: "kindergarten.westeurope.cloudapp.azure.com"
 basePath: "/api/"
 tags: []
 schemes:
@@ -18,8 +18,8 @@ securityDefinitions:
   OauthSecurity:
     type: oauth2
     flow: accessCode
-    authorizationUrl: '/oauth/authorise'
-    tokenUrl: '/oauth/token'
+    authorizationUrl: "http://kindergarten.westeurope.cloudapp.azure.com:3000/oauth/authorise"
+    tokenUrl: "http://kindergarten.westeurope.cloudapp.azure.com:3000/oauth/token"
     scopes:
       admin: Admin scope
       teacher: Teacher scope
