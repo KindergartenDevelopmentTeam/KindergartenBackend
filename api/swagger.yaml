@@ -887,7 +887,7 @@ definitions:
       teachers:
         type: "array"
         items:
-          $ref: "#/definitions/User"
+          $ref: "#/definitions/RealUser"
       children:
         type: "array"
         items:
@@ -1112,7 +1112,7 @@ definitions:
         type: "integer"
         example: 51
       creator:
-        $ref: "#/definitions/User"
+        $ref: "#/definitions/RealUser"
       content:
         type: "string"
         maxLength: 512
@@ -1213,7 +1213,7 @@ definitions:
         type: "integer"
         example: 51
       creator:
-        $ref: "#/definitions/User"
+        $ref: "#/definitions/RealUser"
       content:
         type: "string"
         example: "Ok, got it"
@@ -1240,7 +1240,7 @@ definitions:
         type: "integer"
         example: 51
       user:
-        $ref: "#/definitions/User"
+        $ref: "#/definitions/RealUser"
     example:
       id: 51
       user:
@@ -1304,7 +1304,7 @@ definitions:
         type: "integer"
         example: 51
       user:
-        $ref: "#/definitions/User"
+        $ref: "#/definitions/RealUser"
       option:
         type: "integer"
         example: 1
@@ -1382,7 +1382,7 @@ definitions:
       date: ""
       id: 51
       wasThere: true
-  User:
+  RealUser:
     required:
     - "id"
     properties:
@@ -1398,12 +1398,6 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Child"
-    example:
-      role:
-        name: "Admin"
-        id: 51
-      name: "John Doe"
-      id: 51
   Role:
     required:
     - "id"
@@ -1432,7 +1426,7 @@ definitions:
         type: "string"
         example: "John Doe"
       parent:
-        $ref: "#/definitions/User"
+        $ref: "#/definitions/RealUser"
       presences:
         type: "array"
         items:
