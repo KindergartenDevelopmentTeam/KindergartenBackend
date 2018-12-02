@@ -19,7 +19,8 @@ module.exports = function(app){
       .token(request,response)
       .then(function(token) {
         // Todo: remove unnecessary values in response
-        return res.json(token)
+          console.log(`token: ${JSON.stringify(token, null, 2)}`)
+        return res.json({access_token: token.accessToken})
       }).catch(function(err){
         console.error(err)
         return res.status(500).json(err)

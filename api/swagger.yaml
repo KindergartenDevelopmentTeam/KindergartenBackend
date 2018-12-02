@@ -1120,7 +1120,7 @@ definitions:
       image:
         $ref: "#/definitions/Image"
       poll:
-        $ref: "#/definitions/Poll"
+        $ref: "#/definitions/KindergartenPoll"
       likes:
         type: "array"
         items:
@@ -1249,7 +1249,7 @@ definitions:
           id: 51
         name: "John Doe"
         id: 51
-  Poll:
+  KindergartenPoll:
     required:
     - "id"
     - "options"
