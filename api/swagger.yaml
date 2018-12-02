@@ -1394,6 +1394,10 @@ definitions:
         example: "John Doe"
       role:
         $ref: "#/definitions/Role"
+      children:
+        type: "array"
+        items:
+          $ref: "#/definitions/Child"
     example:
       role:
         name: "Admin"
