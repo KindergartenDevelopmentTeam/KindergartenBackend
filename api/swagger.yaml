@@ -603,8 +603,10 @@ paths:
                 properties:
                   x:
                     type: number
+                    format: double
                   y:
                     type: number
+                    format: double
       responses:
         200:
           description: "The id of the newly created post"
