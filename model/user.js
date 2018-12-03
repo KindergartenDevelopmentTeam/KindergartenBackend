@@ -37,8 +37,12 @@ module.exports = {
 
             const children = await query(`SELECT * FROM child WHERE parentId = ?`, [users[0]['id']])
 
+            const user = users[0]
+
             resolve({
-                ...users[0],
+                id: user.id,
+                name: user.name,
+                scope: user.scope,
                 children: children
             })
         } catch (error) {

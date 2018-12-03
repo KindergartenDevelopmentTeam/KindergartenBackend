@@ -1238,8 +1238,8 @@ definitions:
       name:
         type: "string"
         example: "John Doe"
-      role:
-        $ref: "#/definitions/Role"
+      scope:
+        type: "string"
       children:
         type: "array"
         items:
