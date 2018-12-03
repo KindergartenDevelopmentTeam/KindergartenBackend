@@ -87,6 +87,10 @@ module.exports.createPost = (req, res, next) => {
             if (!hasUserAccessToGroup) throw responses.noPermission()
         })
         .then(() => postModel.createPost(groupId, currentUserId, post))
+        .then(postId => {
+            console.log(`postId: $postId`)
+            return postId
+        })
         .then(postId => res.end("" + postId))
         .catch(next)
 
