@@ -40,7 +40,7 @@ module.exports.likePost = (req, res, next) => {
             if (!hasPermission) throw responses.noPermission()
         })
         .then(() => postModel.like(postId, currentUserId))
-        .then(like => res.end(like))
+        .then(like => res.end(`${like}`))
         .catch(next)
 }
 
