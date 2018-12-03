@@ -20,12 +20,13 @@ const userModel = module.exports = {
     getUsersInGroup: (groupId) => new Promise(async (resolve, reject) => {
         try {
             const userIds = await query(`
-              SELECT uIG.userId
+              SELECT uIG.userId as id
               FROM usersInGroup uIG
               WHERE uIG.groupId = ?
             `, [groupId])
 
             const users = await Promise.all(userIds.map(userId => {
+                console.log(`userId: ${userId['id']}`)
                 return userModel.getUserById(userId['id'])
             }))
 
