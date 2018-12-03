@@ -636,6 +636,7 @@ paths:
               description: "The text of the post"
             poll:
               type: object
+              required: "false"
               properties:
                 question:
                   type: string
@@ -648,9 +649,11 @@ paths:
                     example: "aha, hogyne, persze"
                     description: "The text of the answer"
             image:
+              required: "false"
               description: "the url of the image"
               type: string
             path:
+              required: "false"
               type: array
               items:
                 $ref: "#/definitions/Path"
