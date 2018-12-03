@@ -36,7 +36,7 @@ const userModel = module.exports = {
                    FROM user
                    WHERE id = ?`, [userId])
 
-            console.log(`users: ${JSON.stringify(users, null, 2)}`)
+            console.log(`usersId: ${JSON.stringify(userId, null, 2)}`)
 
             if (users.length === 0) return reject(responses.notFound())
 
