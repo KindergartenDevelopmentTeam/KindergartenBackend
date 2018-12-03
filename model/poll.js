@@ -13,7 +13,7 @@ const pollModel = module.exports = {
             if (polls.length === 0) return reject(responses.notFound())
 
             const poll = polls[0]
-            const options = await pollModel.getOptionsForPoll(pollId)
+            const options = (await pollModel.getOptionsForPoll(pollId)).map(option => option.answer)
             const votes = await pollModel.getVotesForPoll(pollId)
 
 
