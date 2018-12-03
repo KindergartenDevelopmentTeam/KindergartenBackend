@@ -17,11 +17,24 @@ const userModel = module.exports = {
         }
     }),
 
-    getUsersInGroup: (groupId) => query(`
-            SELECT user.id, user.name, user.scope, user.username FROM user
-            JOIN usersInGroup uIG on user.id = uIG.userId
-            WHERE uIG.groupId = ?
-        `, [groupId]),
+    getUsersInGroup: (groupId) => new Promise(async (resolve, reject) => {
+        try {
+            const userIds = await query(`
+              SELECT uIG.userId
+              FROM usersInGroup uIG
+              WHERE uIG.groupId = ?
+            `, [groupId])
+
+            const users = await Promise.all(userIds.map(userId => {
+                return userModel.getUserById(userId)
+            }))
+
+            resolve(users)
+
+        } catch(error) {
+            reject(error)
+        }
+    }),
 
     getUsersInGroupByRole: (groupId, role) => query(`
             SELECT user.id, user.name, user.scope, user.username FROM user
