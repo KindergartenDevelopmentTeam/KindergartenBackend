@@ -29,7 +29,7 @@ const postModel = module.exports = {
             const path = post.pathId ? await pathModel.getPathById(post.pathId) : null
             const likes = await postModel.getLikesForPost(post.id)
             const comments = await postModel.getCommentsForPost(post.id)
-            console.log(`post creator: ${JSON.stringify(post.creator, null, 2)}`)
+            console.log(`post: ${JSON.stringify(post, null, 2)}`)
             const creator = await userModel.getUserById(post.creator)
 
             return {
