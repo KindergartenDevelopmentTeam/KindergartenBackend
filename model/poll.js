@@ -2,7 +2,7 @@ const { query } = require('../db')
 
 const responses = require('../responses')
 
-module.exports = {
+const pollModel = module.exports = {
     getPollById: pollId => new Promise(async (resolve, reject) => {
 
         try {
@@ -13,8 +13,8 @@ module.exports = {
             if (polls.length === 0) return reject(responses.notFound())
 
             const poll = polls[0]
-            const options = await this.getOptionsForPoll(pollId)
-            const votes = await this.getVotesForPoll(pollId)
+            const options = await pollModel.getOptionsForPoll(pollId)
+            const votes = await pollModel.getVotesForPoll(pollId)
 
 
             const fullPoll = {
