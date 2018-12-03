@@ -18,7 +18,8 @@ module.exports = {
 
 
             const fullPoll = {
-                ...poll,
+                id: poll.id,
+                question: poll.question,
                 options: options,
                 votes: votes
             }

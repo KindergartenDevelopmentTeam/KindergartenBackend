@@ -27,7 +27,7 @@ const postModel = module.exports = {
         console.log(`posts: ${JSON.stringify(posts, null, 2)}`)
         const fullPosts = await Promise.all(posts.map(async postPromise => {
             const post = await postPromise
-            const poll = post.pollId ? await pollModel.getOptionsForPoll(post.pollId) : null
+            const poll = post.pollId ? await pollModel.getPollById(post.pollId) : null
             const image = post.imageId ? await imageModel.getImageById(post.imageId) : null
             const path = post.pathId ? await pathModel.getPathById(post.pathId) : null
             const likes = await postModel.getLikesForPost(post.id)
@@ -60,7 +60,7 @@ const postModel = module.exports = {
             if (posts.length === 0) return reject(responses.notFound())
 
             const post = posts[0]
-            const poll = post.pollId ? await pollModel.getOptionsForPoll(post.pollId) : null
+            const poll = post.pollId ? await pollModel.getPollById(post.pollId) : null
             const image = post.imageId ? await imageModel.getImageById(post.imageId) : null
             const path = post.pathId ? await pathModel.getPathById(post.pathId) : null
             const likes = await postModel.getLikesForPost(postId)
