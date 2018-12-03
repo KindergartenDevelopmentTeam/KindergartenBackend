@@ -66,15 +66,11 @@ const group = module.exports = {
 
             const group = groups[0]
 
-            const userModel = require('./user')
-            const creator = userModel.getUserById(group.creator)
-
 
             const fullGroup = {
                 id: group.id,
                 name: group.name,
                 creationDate: group.creationDate,
-                creator: creator,
                 messages: await message.getMessages(group.threadId),
                 posts: await post.getPostsByGroupId(group.id),
                 users: await user.getUsersInGroup(group.id),
