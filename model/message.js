@@ -61,7 +61,8 @@ const messageModel = module.exports = {
                 await queryWithConnection(connection, `INSERT INTO thread (\`name\`) VALUES (?)`, [name])
                 const id = (await queryWithConnection(connection, `SELECT LAST_INSERT_ID() as id;`))[0]['id']
 
-                const ids = flatMap(userIds, userId => [userIds, userId])
+
+                const ids = flatMap(flatMap(userIds, userId => [userIds, userId]), alma => alma)
 
                 console.log(`ids: ${JSON.stringify(ids, null, 2)}`)
 
