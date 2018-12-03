@@ -14,15 +14,27 @@ const childModel = module.exports = {
         }
     }),
 
-    getChildrenFromGroup: (groupId) => query(`
-        SELECT child.* FROM child
-        JOIN childInGroup cig on child.id = cig.childId
-        WHERE cig.groupId = ?
-    `, [groupId]),
+    getChildrenFromGroup: (groupId) => new Promise(async (resolve, reject) => {
+        try {
+            const childIds = await query(`SELECT childId as id
+                                          FROM childInGroup
+                                          WHERE groupId = ?`, [groupId])
+
+            const children = await Promise.all(childIds.map(childId => {
+                return childModel.getChild(childId['id'])
+            }))
+
+            resolve(children)
+
+        } catch (error) {
+            reject(error)
+        }
+
+
+    }),
 
     getChild: (childId) => new Promise(async (resolve, reject) => {
         try {
-            const userModel = require('./user')
             const child = await querySingle(`
               SELECT *
               FROM child
