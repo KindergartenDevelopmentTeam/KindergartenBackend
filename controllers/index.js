@@ -270,7 +270,7 @@ module.exports.removeTeacher = function removeTeacher(req, res, next) {
 module.exports.sendMessage = function sendMessage(req, res, next) {
     var parentId = req.swagger.params['parentId'].value;
     var message = req.swagger.params['message'].value;
-    Index.sendMessage(parentId, message)
+    Index.sendMessage(parentId, message, req.userId)
         .then(function (response) {
             utils.writeJson(res, response);
         })

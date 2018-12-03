@@ -31,7 +31,7 @@ module.exports = {
             const thread = await messageModel.getThread([currentUserId, userId])
 
             messageModel
-                .sendMessage(thread.id, content)
+                .sendMessage(thread.id, content, currentUserId)
                 .then(() => writer.writeJson(res)({
                     code: 200,
                     message: 'Message sent successfully'

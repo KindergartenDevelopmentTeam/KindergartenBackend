@@ -16,10 +16,10 @@ const messageModel = module.exports = {
         }
     }),
 
-    sendMessage: (threadId, content) => query(`
-        INSERT INTO message (threadId, content)
-        VALUES (?, ?)
-    `, [threadId, content]),
+    sendMessage: (threadId, content, sender) => query(`
+        INSERT INTO message (threadId, content, sender)
+        VALUES (?, ?, ?)
+    `, [threadId, content, sender]),
 
     getThread: (userIds) => new Promise(async (resolve, reject) => {
         console.log(`userIds: ${JSON.stringify(userIds, null, 2)}`)
