@@ -1,6 +1,6 @@
 const flatMap = require('flatmap')
 
-const { query, transaction, queryWithConnection } = require('../db')
+const {query, transaction, queryWithConnection} = require('../db')
 
 const responses = require('../responses')
 
@@ -12,7 +12,9 @@ const userModel = require('./user')
 const postModel = module.exports = {
     doesPostExists: postId => new Promise(async (resolve, reject) => {
         try {
-            const posts = await query(`SELECT * FROM post WHERE id = ?`, [postId])
+            const posts = await query(`SELECT *
+                                       FROM post
+                                       WHERE id = ?`, [postId])
 
             resolve(posts.length > 0)
         } catch (error) {
@@ -90,9 +92,10 @@ const postModel = module.exports = {
             console.log(`userId: ${userId}, postId: ${postId}`)
 
             const users = await query(`SELECT usersInGroup.id
-                         FROM usersInGroup
-                         JOIN post ON post.groupId = usersInGroup.groupId
-                         WHERE post.id = ? AND userId = ?`, [postId, userId])
+                                       FROM usersInGroup
+                                              JOIN post ON post.groupId = usersInGroup.groupId
+                                       WHERE post.id = ?
+                                         AND userId = ?`, [postId, userId])
 
             resolve(users.length > 0)
 
@@ -103,7 +106,10 @@ const postModel = module.exports = {
 
     doesUserLikePost: (postId, userId) => new Promise(async (resolve, reject) => {
         try {
-            const likes = await query(`SELECT id FROM \`like\` WHERE postId = ? AND userId = ?`, [postId, userId])
+            const likes = await query(`SELECT id
+                                       FROM \`like\`
+                                       WHERE postId = ?
+                                         AND userId = ?`, [postId, userId])
 
             resolve(likes.length > 0)
         } catch (error) {
@@ -117,9 +123,13 @@ const postModel = module.exports = {
             const userLikesPost = await postModel.doesUserLikePost(postId, userId)
 
             if (userLikesPost) {
-                await query(`DELETE FROM \`like\` WHERE postId = ? AND userId = ?`, [postId, userId])
+                await query(`DELETE
+                             FROM \`like\`
+                             WHERE postId = ?
+                               AND userId = ?`, [postId, userId])
             } else {
-                await query(`INSERT INTO \`like\` (postId, userId) VALUES (?, ?)`, [postId, userId])
+                await query(`INSERT INTO \`like\` (postId, userId)
+                             VALUES (?, ?)`, [postId, userId])
             }
 
             resolve(!userLikesPost)
@@ -131,7 +141,8 @@ const postModel = module.exports = {
 
     comment: (postId, userId, comment) => new Promise(async (resolve, reject) => {
         try {
-            await query(`INSERT INTO comment (content, postId, userId) VALUES (?, ?, ?)`, [comment, postId, userId])
+            await query(`INSERT INTO comment (content, postId, userId)
+                         VALUES (?, ?, ?)`, [comment, postId, userId])
 
             resolve()
         } catch (error) {
@@ -139,9 +150,13 @@ const postModel = module.exports = {
         }
     }),
 
-    getLikesForPost: postId => query(`SELECT * FROM \`like\` WHERE postId = ?`, [postId]),
+    getLikesForPost: postId => query(`SELECT *
+                                      FROM \`like\`
+                                      WHERE postId = ?`, [postId]),
 
-    getCommentsForPost: postId => query(`SELECT * FROM comment WHERE postId = ?`, [postId]),
+    getCommentsForPost: postId => query(`SELECT *
+                                         FROM comment
+                                         WHERE postId = ?`, [postId]),
 
     createPost: (groupId, userId, post) => new Promise((resolve, reject) => {
         try {
@@ -153,26 +168,31 @@ const postModel = module.exports = {
                     let imageId = null
 
                     if (typeof post.poll !== "undefined" && post.poll) {
-                        await queryWithConnection(connection, `INSERT INTO poll (question)
-                                                               VALUES (?)`, [post.poll.question])
-                        pollId = (await queryWithConnection(connection, `SELECT LAST_INSERT_ID() AS id`))[0]['id']
+                        if (post.poll.answers.length > 0) {
+                            await queryWithConnection(connection, `INSERT INTO poll (question)
+                                                                   VALUES (?)`, [post.poll.question])
+                            pollId = (await queryWithConnection(connection, `SELECT LAST_INSERT_ID() AS id`))[0]['id']
 
-                        const answersString = post.poll.answers.map(() => '(?, ?)').join(',')
-                        const params = flatMap(post.poll.answers, answer => [pollId, answer])
 
-                        await queryWithConnection(connection, `INSERT INTO pollOption (pollId, answer)
-                                                               VALUES ${answersString}`, params)
+                            const answersString = post.poll.answers.map(() => '(?, ?)').join(',')
+                            const params = flatMap(post.poll.answers, answer => [pollId, answer])
+
+                            await queryWithConnection(connection, `INSERT INTO pollOption (pollId, answer)
+                                                                   VALUES ${answersString}`, params)
+                        }
 
                     }
 
-                    if (typeof post.image !== "undefined" && post.image !== null) {
-                        await queryWithConnection(connection, `INSERT INTO image (path) VALUES (?)`, [post.image])
+                    if (typeof post.image !== "undefined" && post.image !== null && post.image.length > 0) {
+                        await queryWithConnection(connection, `INSERT INTO image (path)
+                                                               VALUES (?)`, [post.image])
                         imageId = (await queryWithConnection(connection, `SELECT LAST_INSERT_ID() AS id`))[0]['id']
                     }
 
                     let pathId = null
                     if (post.hasOwnProperty('path') && post.path !== null && post.path.length > 0) {
-                        await queryWithConnection(connection, `INSERT INTO path () VALUES ()`, [])
+                        await queryWithConnection(connection, `INSERT INTO path ()
+                                                               VALUES ()`, [])
                         pathId = (await queryWithConnection(connection, `SELECT LAST_INSERT_ID() as id`))[0]['id']
 
                         const insertStr = post.path.map(pathElement => `(?, ?, ?)`).join(',')
@@ -182,7 +202,12 @@ const postModel = module.exports = {
                                                                VALUES ${insertStr}`, insertValues)
                     }
 
-                    await queryWithConnection(connection, `INSERT INTO post (groupId, content, imageId, pollId, pathId, creator)
+                    await queryWithConnection(connection, `INSERT INTO post (groupId,
+                                                                             content,
+                                                                             imageId,
+                                                                             pollId,
+                                                                             pathId,
+                                                                             creator)
                                                            VALUES (?, ?, ?, ?, ?, ?)`,
                         [groupId, post.content, imageId, pollId, pathId, userId])
 
@@ -210,7 +235,9 @@ const postModel = module.exports = {
             if (!(await postModel.doesPostExists(postId)))
                 return reject(responses.notFound())
 
-            const pollIds = await query(`SELECT pollId FROM post WHERE id = ?`, [postId])
+            const pollIds = await query(`SELECT pollId
+                                         FROM post
+                                         WHERE id = ?`, [postId])
 
             console.log(`pollids: ${JSON.stringify(pollIds)}`)
 
@@ -222,9 +249,13 @@ const postModel = module.exports = {
 
             console.log(`pollId: ${JSON.stringify(pollId)}`)
 
-            await query(`DELETE FROM vote WHERE pollId = ? AND voter = ?`, [pollId, userId])
+            await query(`DELETE
+                         FROM vote
+                         WHERE pollId = ?
+                           AND voter = ?`, [pollId, userId])
 
-            await query(`INSERT INTO vote (pollId, voter, selectedOption) VALUES (?, ?, ?)`, [pollId, userId, option])
+            await query(`INSERT INTO vote (pollId, voter, selectedOption)
+                         VALUES (?, ?, ?)`, [pollId, userId, option])
 
             resolve()
 
@@ -236,7 +267,10 @@ const postModel = module.exports = {
     hasUserPermissionToPost: (userId, postId) => new Promise(async (resolve, reject) => {
         try {
 
-            const posts = await query(`SELECT id FROM post WHERE creator = ? AND id = ?`,
+            const posts = await query(`SELECT id
+                                       FROM post
+                                       WHERE creator = ?
+                                         AND id = ?`,
                 [userId, postId])
 
             console.log(`user: ${userId}, post: ${postId} result: ${JSON.stringify(posts)}`)
@@ -257,11 +291,21 @@ const postModel = module.exports = {
                 if (post.poll !== oldPost.poll) {
                     if (!post.hasOwnProperty('poll') || post.poll === null) {
                         const pollId = (await queryWithConnection(connection,
-                            `SELECT pollId FROM post WHERE id = ?`, [postId]))[0]['pollId']
-                        await queryWithConnection(connection, `UPDATE post SET pollId = NULL WHERE id = ?`, [postId])
-                        await queryWithConnection(connection, `DELETE FROM pollOption WHERE pollId = ?`, [pollId])
-                        await queryWithConnection(connection, `DELETE FROM vote WHERE pollId = ?`, [pollId])
-                        await queryWithConnection(connection, `DELETE FROM poll WHERE id = ?`, [pollId])
+                                `SELECT pollId
+                                 FROM post
+                                 WHERE id = ?`, [postId]))[0]['pollId']
+                        await queryWithConnection(connection, `UPDATE post
+                                                               SET pollId = NULL
+                                                               WHERE id = ?`, [postId])
+                        await queryWithConnection(connection, `DELETE
+                                                               FROM pollOption
+                                                               WHERE pollId = ?`, [pollId])
+                        await queryWithConnection(connection, `DELETE
+                                                               FROM vote
+                                                               WHERE pollId = ?`, [pollId])
+                        await queryWithConnection(connection, `DELETE
+                                                               FROM poll
+                                                               WHERE id = ?`, [pollId])
                     } else if (typeof oldPost.poll !== "undefined" && oldPost.poll !== null) {
                         await queryWithConnection(connection, `UPDATE poll
                                                                SET question = ?
@@ -271,11 +315,18 @@ const postModel = module.exports = {
                         console.log(`oldPost: ${JSON.stringify(oldPost)}`)
 
 
-                        await queryWithConnection(connection, `DELETE FROM vote WHERE pollId = ?`, [oldPost.poll.id])
-                        await queryWithConnection(connection, `DELETE FROM pollOption WHERE pollId = ?`, [oldPost.poll.id])
-                        await queryWithConnection(connection, `DELETE FROM poll WHERE id = ?`, [oldPost.poll.id])
+                        await queryWithConnection(connection, `DELETE
+                                                               FROM vote
+                                                               WHERE pollId = ?`, [oldPost.poll.id])
+                        await queryWithConnection(connection, `DELETE
+                                                               FROM pollOption
+                                                               WHERE pollId = ?`, [oldPost.poll.id])
+                        await queryWithConnection(connection, `DELETE
+                                                               FROM poll
+                                                               WHERE id = ?`, [oldPost.poll.id])
 
-                        await queryWithConnection(connection, `INSERT INTO poll (question) VALUES (?)`,
+                        await queryWithConnection(connection, `INSERT INTO poll (question)
+                                                               VALUES (?)`,
                             [post.poll.question])
                         const pollId = (await queryWithConnection(connection, `SELECT LAST_INSERT_ID() as id`))[0]['id']
 
@@ -285,12 +336,15 @@ const postModel = module.exports = {
                         await queryWithConnection(connection, `INSERT INTO pollOption (pollId, answer)
                                                                VALUES ${answersString}`, params)
 
-                        await queryWithConnection(connection, `UPDATE post SET pollId = ? WHERE id = ?`,
+                        await queryWithConnection(connection, `UPDATE post
+                                                               SET pollId = ?
+                                                               WHERE id = ?`,
                             [pollId, postId])
 
                     } else {
 
-                        await queryWithConnection(connection, `INSERT INTO poll (question) VALUES (?)`,
+                        await queryWithConnection(connection, `INSERT INTO poll (question)
+                                                               VALUES (?)`,
                             [post.poll.question])
                         const pollId = (await queryWithConnection(connection, `SELECT LAST_INSERT_ID() as id`))[0]['id']
 
@@ -300,7 +354,9 @@ const postModel = module.exports = {
                         await queryWithConnection(connection, `INSERT INTO pollOption (pollId, answer)
                                                                VALUES ${answersString}`, params)
 
-                        await queryWithConnection(connection, `UPDATE post SET pollId = ? WHERE id = ?`,
+                        await queryWithConnection(connection, `UPDATE post
+                                                               SET pollId = ?
+                                                               WHERE id = ?`,
                             [pollId, postId])
 
                     }
@@ -312,20 +368,30 @@ const postModel = module.exports = {
                     if (!post.hasOwnProperty('image') || post.image === null) {
 
                         const imageId = (await queryWithConnection(connection,
-                                `SELECT imageId FROM post WHERE id = ?`, [postId]))[0]['imageId']
-                        await queryWithConnection(connection, `UPDATE post SET imageId = NULL WHERE id = ?`, [postId])
-                        await queryWithConnection(connection, `DELETE FROM image WHERE id = ?`, [imageId])
+                                `SELECT imageId
+                                 FROM post
+                                 WHERE id = ?`, [postId]))[0]['imageId']
+                        await queryWithConnection(connection, `UPDATE post
+                                                               SET imageId = NULL
+                                                               WHERE id = ?`, [postId])
+                        await queryWithConnection(connection, `DELETE
+                                                               FROM image
+                                                               WHERE id = ?`, [imageId])
 
                     } else if (typeof oldPost.image !== "undefined" && oldPost.image !== null) {
 
-                        await queryWithConnection(connection, `UPDATE image SET path = ?
+                        await queryWithConnection(connection, `UPDATE image
+                                                               SET path = ?
                                                                WHERE id = (SELECT imageId FROM post WHERE id = ?)`,
                             [post.image, postId])
 
                     } else {
-                        await queryWithConnection(connection, `INSERT INTO image (path) VALUES (?)`, [post.image])
+                        await queryWithConnection(connection, `INSERT INTO image (path)
+                                                               VALUES (?)`, [post.image])
                         const imageId = (await queryWithConnection(connection, `SELECT LAST_INSERT_ID() as id`))[0]['id']
-                        await queryWithConnection(connection, `UPDATE post SET imageId = ? WHERE id = ?`,
+                        await queryWithConnection(connection, `UPDATE post
+                                                               SET imageId = ?
+                                                               WHERE id = ?`,
                             [imageId, postId])
                     }
                 }
@@ -334,19 +400,34 @@ const postModel = module.exports = {
                 if (post.path !== oldPost.path) {
                     if (!post.hasOwnProperty('path') || post.path === null || post.path.length === 0) {
                         const pathId = (await queryWithConnection(connection,
-                            `SELECT pathId FROM post WHERE id = ?`, [postId]))[0]['pathId']
-                        await queryWithConnection(connection, `UPDATE post SET pathId = NULL WHERE id = ?`, [postId])
-                        await queryWithConnection(connection, `DELETE FROM pathElements WHERE pathId = ?`, [pathId])
-                        await queryWithConnection(connection, `DELETE FROM path WHERE id = ?`, [pathId])
+                                `SELECT pathId
+                                 FROM post
+                                 WHERE id = ?`, [postId]))[0]['pathId']
+                        await queryWithConnection(connection, `UPDATE post
+                                                               SET pathId = NULL
+                                                               WHERE id = ?`, [postId])
+                        await queryWithConnection(connection, `DELETE
+                                                               FROM pathElements
+                                                               WHERE pathId = ?`, [pathId])
+                        await queryWithConnection(connection, `DELETE
+                                                               FROM path
+                                                               WHERE id = ?`, [pathId])
                     } else if (typeof oldPost.path !== "undefined" && oldPost.path !== null && oldPost.path.length > 0) {
 
                         const oldPathId = (await queryWithConnection(connection,
-                            `SELECT pathId FROM post WHERE id = ?`, [postId]))[0]['pathId']
+                                `SELECT pathId
+                                 FROM post
+                                 WHERE id = ?`, [postId]))[0]['pathId']
 
-                        await queryWithConnection(connection, `DELETE FROM pathElements WHERE pathId = ?`, [oldPathId])
-                        await queryWithConnection(connection, `DELETE FROM path WHERE id = ?`, [oldPathId])
+                        await queryWithConnection(connection, `DELETE
+                                                               FROM pathElements
+                                                               WHERE pathId = ?`, [oldPathId])
+                        await queryWithConnection(connection, `DELETE
+                                                               FROM path
+                                                               WHERE id = ?`, [oldPathId])
 
-                        await queryWithConnection(connection, `INSERT INTO path () VALUES ()`, [])
+                        await queryWithConnection(connection, `INSERT INTO path ()
+                                                               VALUES ()`, [])
                         const pathId = (await queryWithConnection(connection, `SELECT LAST_INSERT_ID() as id`))[0]['id']
 
                         const answersString = post.path.map(() => '(?, ?, ?)').join(',')
@@ -355,12 +436,15 @@ const postModel = module.exports = {
                         await queryWithConnection(connection, `INSERT INTO pathElements (pathId, x, y)
                                                                VALUES ${answersString}`, params)
 
-                        await queryWithConnection(connection, `UPDATE post SET pathId = ? WHERE id = ?`,
+                        await queryWithConnection(connection, `UPDATE post
+                                                               SET pathId = ?
+                                                               WHERE id = ?`,
                             [pathId, postId])
 
                     } else {
 
-                        await queryWithConnection(connection, `INSERT INTO path () VALUES ()`, [])
+                        await queryWithConnection(connection, `INSERT INTO path ()
+                                                               VALUES ()`, [])
                         const pathId = (await queryWithConnection(connection, `SELECT LAST_INSERT_ID() as id`))[0]['id']
 
                         const answersString = post.path.map(() => '(?, ?, ?)').join(',')
@@ -369,7 +453,9 @@ const postModel = module.exports = {
                         await queryWithConnection(connection, `INSERT INTO pathElements (pollId, answer)
                                                                VALUES ${answersString}`, params)
 
-                        await queryWithConnection(connection, `UPDATE post SET pathId = ? WHERE id = ?`,
+                        await queryWithConnection(connection, `UPDATE post
+                                                               SET pathId = ?
+                                                               WHERE id = ?`,
                             [pathId, postId])
 
                     }
@@ -378,17 +464,20 @@ const postModel = module.exports = {
 
                 let pathId = null
                 if (post.hasOwnProperty('path') && post.path !== null && post.path.length > 0) {
-                    await queryWithConnection(connection, `INSERT INTO path () VALUES ()`, [])
+                    await queryWithConnection(connection, `INSERT INTO path ()
+                                                           VALUES ()`, [])
                     pathId = (await queryWithConnection(connection, `SELECT LAST_INSERT_ID() as id`))[0]['id']
 
                     const insertStr = path.map(pathElement => `(?, ?, ?)`)
                     const insertValues = flatMap(post.path, pathElement => [pathId, pathElement.x, pathElement.y])
 
                     await queryWithConnection(connection, `INSERT INTO pathElements (pathId, x, y)
-                                                               VALUES ${insertStr}`, insertValues)
+                                                           VALUES ${insertStr}`, insertValues)
                 }
 
-                await queryWithConnection(connection, `UPDATE post SET content = ? WHERE id = ?`, [post.content, postId])
+                await queryWithConnection(connection, `UPDATE post
+                                                       SET content = ?
+                                                       WHERE id = ?`, [post.content, postId])
 
                 connection.commit()
 
@@ -396,7 +485,7 @@ const postModel = module.exports = {
 
             } catch (error) {
                 connection.rollback()
-                reject (error)
+                reject(error)
             }
         })
     })
