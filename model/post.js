@@ -156,15 +156,15 @@ const postModel = module.exports = {
 
     getCommentsForPost: postId => new Promise(async (resolve, reject) => {
         try {
-            const comment = await query(`SELECT *
+            const comments = await query(`SELECT *
                                          FROM comment
                                          WHERE postId = ?`, [postId])
-            resolve({
+            resolve(await Promise.all(comments.map(comment => ({
                 id: comment.id,
                 content: comment.content,
                 creator: userModel.getUserById(comment.userId),
                 creationDate: comment.creationDate
-            })
+            }))))
         } catch (error) {
             reject(error)
         }
