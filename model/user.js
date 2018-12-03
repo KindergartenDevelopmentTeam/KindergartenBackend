@@ -26,7 +26,7 @@ const userModel = module.exports = {
             `, [groupId])
 
             const users = await Promise.all(userIds.map(userId => {
-                return userModel.getUserById(userId)
+                return userModel.getUserById(userId['id'])
             }))
 
             resolve(users)
