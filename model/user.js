@@ -36,6 +36,8 @@ const userModel = module.exports = {
                    FROM user
                    WHERE id = ?`, [userId])
 
+            console.log(`users: ${JSON.stringify(users, null, 2)}`)
+
             if (users.length === 0) return reject(responses.notFound())
 
             const childIds = await query(`SELECT id FROM child WHERE parentId = ?`, [users[0]['id']])
