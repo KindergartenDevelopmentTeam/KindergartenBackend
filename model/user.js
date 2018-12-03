@@ -2,7 +2,10 @@ const { query, transaction, queryWithConnection } = require('../db')
 const responses = require('../responses')
 const bcrypt = require("bcrypt");
 
-module.exports = {
+const childModel = require('./child')
+console.log(`childModel: ${JSON.stringify(childModel, null, 2)}`)
+
+const userModel = module.exports = {
     doesUserExists: userId => new Promise(async (resolve, reject) => {
         try {
             const users = await query(`SELECT *
@@ -35,7 +38,10 @@ module.exports = {
 
             if (users.length === 0) return reject(responses.notFound())
 
-            const children = await query(`SELECT * FROM child WHERE parentId = ?`, [users[0]['id']])
+            const childIds = await query(`SELECT id FROM child WHERE parentId = ?`, [users[0]['id']])
+            const children = await Promise.all(childIds.map(childId => {
+                return childModel.getChild(childId['id'])
+            }))
 
             const user = users[0]
 

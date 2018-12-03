@@ -1,7 +1,7 @@
 const { query, querySingle, transaction, queryWithConnection } = require('../db')
 const responses = require('../responses')
 
-const child = module.exports = {
+const childModel = module.exports = {
     doesChildExists: childId => new Promise(async (resolve, reject) => {
         try {
             const children = await query(`SELECT *
@@ -20,10 +20,33 @@ const child = module.exports = {
         WHERE cig.groupId = ?
     `, [groupId]),
 
-    getChild: (childId) => querySingle(`
-            SELECT * FROM child
-            WHERE id = ?
-    `, [childId]),
+    getChild: (childId) => new Promise(async (resolve, reject) => {
+        try {
+            const userModel = require('./user')
+            const child = await querySingle(`
+              SELECT *
+              FROM child
+              WHERE id = ?
+            `, [childId])
+
+            console.log('child')
+
+            const parentId = child.parentId
+            const presences = await query(`SELECT id, wasThere, date FROM presence WHERE childId = ?`, [childId])
+            const notes = await query(`SELECT id, note as content FROM note WHERE childId = ?`, [childId])
+
+            resolve({
+                id: child.id,
+                name: child.name,
+                parentId: parentId,
+                presences: presences,
+                notes: notes
+            })
+
+        } catch (error) {
+            reject(error)
+        }
+    }),
 
     editChild: (child) => query(`
         UPDATE child SET name = ?, parentId = ? WHERE id = ?
@@ -121,7 +144,7 @@ const child = module.exports = {
     deleteChild: childId => new Promise(async (resolve, reject) => {
         try {
 
-            if(!(await child.doesChildExists(childId))) return reject(responses.notFound())
+            if(!(await childModel.doesChildExists(childId))) return reject(responses.notFound())
 
             transaction(async connection => {
                 try {
@@ -158,7 +181,5 @@ const child = module.exports = {
             reject(error)
         }
     })
-
-
 
 }

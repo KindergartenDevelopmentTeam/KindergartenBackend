@@ -1262,7 +1262,7 @@ definitions:
     - "id"
     - "name"
     - "notes"
-    - "parent"
+    - "parentId"
     - "presences"
     properties:
       id:
@@ -1271,8 +1271,8 @@ definitions:
       name:
         type: "string"
         example: "John Doe"
-      parent:
-        $ref: "#/definitions/KindergartenUser"
+      parentId:
+        type: "integer"
       presences:
         type: "array"
         items:

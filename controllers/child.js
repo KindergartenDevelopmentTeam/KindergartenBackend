@@ -4,6 +4,7 @@ const responses = require('../responses')
 
 const childModel = require('../model/child')
 
+const userModel = require('../model/user')
 
 module.exports = {
 
