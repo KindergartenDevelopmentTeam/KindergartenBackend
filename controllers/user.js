@@ -52,7 +52,7 @@ module.exports = {
 
         try {
             const thread = await messageModel.getThread([currentUserId, userId])
-            const messages = await messageModel.getMessages(thread.id)
+            const messages = await messageModel.getMessages(thread.id, req.userId)
 
             writer.writeJson(res)(messages)
 

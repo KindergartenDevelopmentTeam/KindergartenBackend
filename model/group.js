@@ -57,7 +57,7 @@ const group = module.exports = {
         }
     }),
 
-    getGroupById: groupId => new Promise(async (resolve, reject) => {
+    getGroupById: (groupId, currentUser) => new Promise(async (resolve, reject) => {
         try {
             const groups = await query('SELECT * FROM `group` WHERE id = ?', [groupId])
             if (groups.length === 0) return reject(responses.notFound())
@@ -71,7 +71,7 @@ const group = module.exports = {
                 id: group.id,
                 name: group.name,
                 creationDate: group.creationDate,
-                messages: await message.getMessages(group.threadId),
+                messages: await message.getMessages(group.threadId, currentUser),
                 posts: await post.getPostsByGroupId(group.id),
                 users: await user.getUsersInGroup(group.id),
                 children: await child.getChildrenFromGroup(group.id)
@@ -280,7 +280,7 @@ const group = module.exports = {
 
             ids = ids.map(id => id.id)
 
-            const groups = Promise.all(ids.map(async groupId => group.getGroupById(groupId)))
+            const groups = Promise.all(ids.map(async groupId => group.getGroupById(groupId, userId)))
 
             resolve(groups)
         } catch (error) {

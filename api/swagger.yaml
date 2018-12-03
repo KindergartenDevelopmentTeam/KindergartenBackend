@@ -1193,6 +1193,12 @@ definitions:
         type: "string"
         format: "int32"
         example: ""
+      sender:
+        type: "integer"
+        description: "the id of the user who sent the message"
+      wasSentByCurrentUser:
+        type: "boolean"
+        description: "was the message sent by the current user"
     example:
       id: 51
       creationDate: ""

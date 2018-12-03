@@ -9,7 +9,7 @@ module.exports.getGroup = (req, res, next) => {
     const groupId = req.swagger.params.groupId.value
 
     groupModel
-        .getGroupById(groupId)
+        .getGroupById(groupId, req.userId)
         .then(writer.writeJson(res))
         .catch(next)
 };

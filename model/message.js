@@ -3,7 +3,18 @@ const { query, transaction, queryWithConnection } = require('../db')
 const flatMap = require('flatmap')
 
 const messageModel = module.exports = {
-    getMessages: (threadId) => query('SELECT * FROM `message` WHERE threadId = ?', [threadId]),
+    getMessages: (threadId, currentUser) => new Promise(async (resolve, reject) => {
+        try {
+            const messages = await query('SELECT * FROM `message` WHERE threadId = ?', [threadId])
+
+            resolve(messages.map(message => {
+                message.wasSentByCurrentUser = currentUser === message.sender
+                return message
+            }))
+        } catch (error) {
+            reject(error)
+        }
+    }),
 
     sendMessage: (threadId, content) => query(`
         INSERT INTO message (threadId, content)
