@@ -653,14 +653,7 @@ paths:
             path:
               type: array
               items:
-                type: object
-                properties:
-                  x:
-                    type: number
-                    format: double
-                  y:
-                    type: number
-                    format: double
+                $ref: "#/definitions/Path"
       responses:
         200:
           description: "The id of the newly created post"
@@ -763,12 +756,7 @@ paths:
             path:
               type: array
               items:
-                type: object
-                properties:
-                  x:
-                    type: number
-                  y:
-                    type: number
+                $ref: "#/definitions/Path"
       responses:
         200:
           description: "Post successfully edited"
@@ -954,7 +942,6 @@ definitions:
           $ref: "#/definitions/Message"
       creationDate:
         type: "string"
-        example: ""
   KindergartenPost:
     required:
     - "comments"
@@ -976,6 +963,10 @@ definitions:
         $ref: "#/definitions/Image"
       poll:
         $ref: "#/definitions/KindergartenPoll"
+      path:
+        type: "array"
+        items:
+          $ref: "#/definitions/Path"
       likes:
         type: "array"
         items:
@@ -1311,3 +1302,14 @@ definitions:
       - date: ""
         id: 51
         wasThere: true
+  Path:
+    required:
+    - "x"
+    - "y"
+    properties:
+      x:
+        type: "number"
+        format: "double"
+      y:
+        type: "number"
+        format: "double"

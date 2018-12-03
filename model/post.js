@@ -7,6 +7,7 @@ const responses = require('../responses')
 const pollModel = require('./poll')
 const imageModel = require('./image')
 const pathModel = require('./path')
+const userModel = require('./user')
 
 const postModel = module.exports = {
     doesPostExists: postId => new Promise(async (resolve, reject) => {
@@ -28,10 +29,12 @@ const postModel = module.exports = {
             const path = post.pathId ? await pathModel.getPathById(post.pathId) : null
             const likes = await postModel.getLikesForPost(post.id)
             const comments = await postModel.getCommentsForPost(post.id)
+            const creator = await userModel.getUserById(post.creator)
 
             return {
                 id: post.id,
                 content: post.content,
+                creator: creator,
                 creationDate: post.creationDate,
                 poll: poll,
                 image: image,
@@ -58,10 +61,12 @@ const postModel = module.exports = {
             const path = post.pathId ? await pathModel.getPathById(post.pathId) : null
             const likes = await postModel.getLikesForPost(postId)
             const comments = await postModel.getCommentsForPost(postId)
+            const creator = await userModel.getUserById(post.creator)
+
 
             const fullPost = {
                 id: post.id,
-                groupId: post.groupId,
+                creator: creator,
                 content: post.content,
                 creationDate: post.creationDate,
                 poll: poll,
