@@ -22,6 +22,7 @@ const postModel = module.exports = {
 
     getPostsByGroupId: groupId => new Promise(async (resolve, reject) => {
         const posts = await query('SELECT * FROM post WHERE groupId = ?', [groupId])
+        console.log(`posts: ${JSON.stringify(posts, null, 2)}`)
         const fullPosts = await Promise.all(posts.map(async postPromise => {
             const post = await postPromise
             const poll = post.pollId ? await pollModel.getOptionsForPoll(post.pollId) : null
