@@ -154,9 +154,21 @@ const postModel = module.exports = {
                                       FROM \`like\`
                                       WHERE postId = ?`, [postId]),
 
-    getCommentsForPost: postId => query(`SELECT *
+    getCommentsForPost: postId => new Promise(async (resolve, reject) => {
+        try {
+            const comment = await query(`SELECT *
                                          FROM comment
-                                         WHERE postId = ?`, [postId]),
+                                         WHERE postId = ?`, [postId])
+            resolve({
+                id: comment.id,
+                content: comment.content,
+                creator: userModel.getUserById(comment.userId),
+                creationDate: comment.creationDate
+            })
+        } catch (error) {
+            reject(error)
+        }
+     }),
 
     createPost: (groupId, userId, post) => new Promise((resolve, reject) => {
         try {
