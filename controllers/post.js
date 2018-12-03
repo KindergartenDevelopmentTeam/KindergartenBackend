@@ -88,7 +88,7 @@ module.exports.createPost = (req, res, next) => {
         })
         .then(() => postModel.createPost(groupId, currentUserId, post))
         .then(postId => {
-            console.log(`postId: $postId`)
+            console.log(`postId: ${postId}`)
             return postId
         })
         .then(postId => res.end("" + postId))
