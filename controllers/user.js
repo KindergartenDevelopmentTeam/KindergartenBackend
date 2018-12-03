@@ -25,8 +25,8 @@ module.exports = {
         const userId = req.swagger.params.userId.value
         const content = req.swagger.params.message.value
 
-        //const currentUserId = req.userId;
-        const currentUserId = 1;
+        const currentUserId = req.userId;
+        //const currentUserId = 1;
         try {
             const thread = await messageModel.getThread([currentUserId, userId])
 
