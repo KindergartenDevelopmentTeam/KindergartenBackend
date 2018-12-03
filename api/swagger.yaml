@@ -669,7 +669,7 @@ paths:
       x-swagger-router-controller: "post"
       security:
       - OauthSecurity:
-        - "admin"po
+        - "admin"
         - "teacher"
         - "parent"
   /post/{postId}/vote:
